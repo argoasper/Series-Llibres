@@ -6,20 +6,20 @@ struct ItemRow: View {
     let actions: LibraryActions
 
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: 8) {
             statusCircle
             kindIcon
 
             VStack(alignment: .leading, spacing: 2) {
                 HStack(spacing: 6) {
                     Text(item.title)
-                        .font(.subheadline.weight(.semibold))
+                        .font(.app(.subheadline))
                         .foregroundStyle(Theme.ink)
                         .lineLimit(1)
 
                     if let badge = item.seasonBadge {
                         Text(badge)
-                            .font(.caption2.weight(.bold))
+                            .font(.app(.caption2))
                             .foregroundStyle(Theme.serieTint)
                             .padding(.horizontal, 5)
                             .padding(.vertical, 2)
@@ -27,12 +27,13 @@ struct ItemRow: View {
                                 RoundedRectangle(cornerRadius: 4, style: .continuous)
                                     .fill(Theme.serieTint.opacity(0.14))
                             }
+                            .accessibilityLabel("Temporada \(badge.dropFirst())")
                     }
                 }
 
                 if let subtitle = item.subtitleLine {
                     Text(subtitle)
-                        .font(.caption)
+                        .font(.app(.caption))
                         .foregroundStyle(Theme.inkFaint)
                         .lineLimit(1)
                 }
@@ -42,22 +43,26 @@ struct ItemRow: View {
 
             if let rating = item.ratingText {
                 Text("★ \(rating)")
-                    .font(.caption)
+                    .font(.app(.caption))
                     .foregroundStyle(Theme.inProgress)
+                    .accessibilityLabel("Valoració \(rating)")
             }
 
             Text(item.year.map { String($0) } ?? "—")
-                .font(.caption)
+                .font(.app(.caption))
                 .monospacedDigit()
                 .foregroundStyle(Theme.inkFaint)
                 .frame(width: 38, alignment: .trailing)
+                .accessibilityLabel(item.year.map { "Any \($0)" } ?? "Sense any")
 
-            Image(systemName: "chevron.right")
-                .font(.caption2.weight(.semibold))
+            Image(systemName: "pencil")
+                .font(.app(.caption2))
                 .foregroundStyle(Theme.inkFaint)
+                .accessibilityHidden(true)
         }
-        .padding(.horizontal, 14)
-        .padding(.vertical, 10)
+        .padding(.leading, 4)
+        .padding(.trailing, 14)
+        .padding(.vertical, 6)
         .contentShape(Rectangle())
     }
 
@@ -75,6 +80,10 @@ struct ItemRow: View {
     }
 
     /// Toca per avançar d'estat, com el cercle de l'HTML.
+    ///
+    /// El cercle es veu de 21 pt, però la zona tàctil és de 44×44 pt: és el
+    /// mínim de les Human Interface Guidelines i evita que els tocs una mica
+    /// desviats obrin el detall en lloc de canviar l'estat.
     private var statusCircle: some View {
         Button {
             withAnimation(.snappy(duration: 0.2)) {
@@ -102,9 +111,11 @@ struct ItemRow: View {
                         .foregroundStyle(.white)
                 }
             }
-            .contentShape(Circle())
+            .frame(width: 44, height: 44)
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("Estat: \(item.statusLabel). Toca per canviar-lo.")
+        .accessibilityLabel("Estat: \(item.statusLabel)")
+        .accessibilityHint("Toca per passar a \(item.status.next.label(for: item.kind))")
     }
 }

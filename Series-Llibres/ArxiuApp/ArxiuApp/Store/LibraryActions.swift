@@ -3,6 +3,7 @@ import SwiftData
 
 /// Operacions sobre les fitxes. Concentra en un sol lloc la regla de
 /// "marcar com a fet omple el mes automàticament" i el registre per desfer.
+@MainActor
 struct LibraryActions {
     let context: ModelContext
     let history: ChangeHistory
@@ -24,7 +25,9 @@ struct LibraryActions {
         Haptics.tap()
     }
 
+    /// Elimina la fitxa deixant-ne una còpia a l'històric, perquè "Desfés" la pugui recuperar.
     func delete(_ item: LibraryItem) {
+        history.recordDeletion(of: item)
         context.delete(item)
         try? context.save()
         Haptics.warning()
@@ -35,9 +38,14 @@ struct LibraryActions {
         try? context.save()
     }
 
+    /// Desfà l'últim canvi. Si no hi havia res a desfer (o l'última entrada
+    /// apuntava a una fitxa que ja no existeix) fa un retorn hàptic d'avís,
+    /// no pas d'èxit.
     func undo() {
         if history.undo(in: context) != nil {
             Haptics.success()
+        } else {
+            Haptics.warning()
         }
     }
 }

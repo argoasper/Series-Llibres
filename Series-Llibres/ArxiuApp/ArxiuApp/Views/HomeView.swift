@@ -1,7 +1,7 @@
 import SwiftUI
 import SwiftData
 
-/// Pantalla d'entrada: els botons de secció grans i, a sota, què tens començat.
+/// Pantalla d'entrada: els botons de secció grans, repartits per tota la pantalla.
 struct HomeView: View {
     @Environment(\.modelContext) private var context
     @Environment(ChangeHistory.self) private var history
@@ -14,24 +14,41 @@ struct HomeView: View {
         LibraryActions(context: context, history: history)
     }
 
-    private var inProgress: [LibraryItem] {
-        items.filter { $0.status == .enCurs }
-             .sorted { $0.updatedAt > $1.updatedAt }
-    }
+    /// Les 6 caselles principals, en l'ordre en què apareixen a la graella.
+    private let sections: [LibrarySection] = [
+        .all, .kind(.serie), .kind(.peli), .kind(.llibre), .status(.enCurs), .status(.pendent)
+    ]
 
-    private var columns: [GridItem] {
-        [GridItem(.adaptive(minimum: 150), spacing: 12)]
-    }
+    private let numberOfColumns = 2
+    private let spacing: CGFloat = 12
+    private let horizontalInset: CGFloat = 16
+    private let verticalInset: CGFloat = 12
 
     var body: some View {
         NavigationStack(path: $route) {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 26) {
-                    grid
-                    if !inProgress.isEmpty { continuing }
+            GeometryReader { geo in
+                let rows = Int(ceil(Double(sections.count) / Double(numberOfColumns)))
+                let availableHeight = geo.size.height
+                    - verticalInset * 2
+                    - spacing * CGFloat(rows - 1)
+                let tileHeight = max(Theme.tileHeight, availableHeight / CGFloat(rows))
+
+                ScrollView {
+                    LazyVGrid(
+                        columns: Array(
+                            repeating: GridItem(.flexible(), spacing: spacing),
+                            count: numberOfColumns
+                        ),
+                        spacing: spacing
+                    ) {
+                        ForEach(sections) { section in
+                            tile(for: section, height: tileHeight)
+                        }
+                    }
+                    .padding(.horizontal, horizontalInset)
+                    .padding(.vertical, verticalInset)
+                    .frame(minHeight: geo.size.height)
                 }
-                .padding(.horizontal, 16)
-                .padding(.bottom, 32)
             }
             .background(Theme.bg)
             .navigationTitle("El Meu Arxiu")
@@ -58,57 +75,16 @@ struct HomeView: View {
         }
     }
 
-    private var grid: some View {
-        LazyVGrid(columns: columns, spacing: 12) {
-            tile(for: .all)
-            tile(for: .kind(.serie))
-            tile(for: .kind(.peli))
-            tile(for: .kind(.llibre))
-            tile(for: .status(.enCurs))
-            tile(for: .status(.pendent))
-        }
-        .padding(.top, 4)
-    }
-
-    private func tile(for section: LibrarySection) -> some View {
+    private func tile(for section: LibrarySection, height: CGFloat) -> some View {
         TileButton(
-            symbol: section.symbol,
+            symbol: section.heroSymbol,
             label: section.title,
             count: items.filter(section.matches).count,
             color: section.color
         ) {
             route.append(section)
         }
-    }
-
-    private var continuing: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("Continuant ara")
-                .font(.headline)
-                .foregroundStyle(Theme.inkDim)
-
-            VStack(spacing: 0) {
-                let shown = Array(inProgress.prefix(6))
-                ForEach(shown) { item in
-                    // El NavigationLink va al darrere i invisible perquè el
-                    // cercle d'estat de la fila segueixi sent polsable.
-                    ZStack(alignment: .leading) {
-                        NavigationLink { ItemDetailView(item: item) } label: { EmptyView() }
-                            .opacity(0)
-                        ItemRow(item: item, actions: actions)
-                    }
-
-                    if item.id != shown.last?.id {
-                        Divider().padding(.leading, 85)
-                    }
-                }
-            }
-            .padding(.vertical, 4)
-            .background {
-                RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .fill(Theme.panel)
-            }
-        }
+        .frame(height: height)
     }
 }
 

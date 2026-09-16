@@ -30,6 +30,20 @@ enum LibrarySection: Hashable, Identifiable {
         }
     }
 
+    /// Icona «de veritat», plena i amb volum, per als botons grans de la
+    /// pantalla d'entrada. Els tiles petits i les files continuen amb `symbol`.
+    var heroSymbol: String {
+        switch self {
+        case .all:                return "rectangle.stack.fill"
+        case .kind(.serie):       return "sparkles.tv.fill"
+        case .kind(.peli):        return "film.stack.fill"
+        case .kind(.llibre):      return "books.vertical.fill"
+        case .status(.enCurs):    return "play.circle.fill"
+        case .status(.pendent):   return "clock.fill"
+        case .status(.fet):       return "checkmark.seal.fill"
+        }
+    }
+
     var color: Color {
         switch self {
         case .all:              return Theme.allTint

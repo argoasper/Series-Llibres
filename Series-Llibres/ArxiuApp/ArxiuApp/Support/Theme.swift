@@ -3,7 +3,7 @@ import SwiftUI
 
 /// Paleta traduïda de les variables CSS de l'HTML original, adaptada a mode clar i fosc.
 enum Theme {
-    static let bg          = Color("ThemeBG",        light: 0xFBFBFA, dark: 0x0F1012)
+    static let bg          = Color("ThemeBG",        light: 0xF2F2F0, dark: 0x0F1012)
     static let panel       = Color("ThemePanel",     light: 0xFFFFFF, dark: 0x1B1D20)
     static let line        = Color("ThemeLine",      light: 0xE7E5E0, dark: 0x2E3135)
     static let ink         = Color("ThemeInk",       light: 0x22231F, dark: 0xF2F2F0)

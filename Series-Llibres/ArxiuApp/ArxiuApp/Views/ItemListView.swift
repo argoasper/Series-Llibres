@@ -9,14 +9,22 @@ struct ItemListView: View {
 
     let section: LibrarySection
 
+    /// A iPad, dins la columna de detall, la navegació de secció/estat ja la fa
+    /// el sidebar (`IPadHomeView`): amaguem aquest submenú perquè no es dupliqui.
+    let showsSubmenu: Bool
+
     @State private var search = ""
     @State private var kindFilter: MediaKind?
     @State private var statusFilter: ItemStatus?
     @State private var sort: SortOrder = .title
     @State private var showingNew = false
+    @State private var pendingDeletion: LibraryItem?
+    @State private var editing: LibraryItem?
+    @State private var detail: LibraryItem?
 
-    init(section: LibrarySection) {
+    init(section: LibrarySection, showsSubmenu: Bool = true) {
         self.section = section
+        self.showsSubmenu = showsSubmenu
         _statusFilter = State(initialValue: section.initialStatus)
     }
 
@@ -35,11 +43,13 @@ struct ItemListView: View {
         if let kindFilter { list = list.filter { $0.kind == kindFilter } }
         if let statusFilter { list = list.filter { $0.status == statusFilter } }
 
-        let needle = search.trimmingCharacters(in: .whitespaces).lowercased()
+        // `localizedStandardContains` ignora majúscules I accents: buscar
+        // "Fundacio" ha de trobar "Fundació" (37 títols de l'arxiu porten accents).
+        let needle = search.trimmingCharacters(in: .whitespaces)
         if !needle.isEmpty {
             list = list.filter {
-                $0.title.lowercased().contains(needle)
-                    || ($0.author?.lowercased().contains(needle) ?? false)
+                $0.title.localizedStandardContains(needle)
+                    || ($0.author?.localizedStandardContains(needle) ?? false)
             }
         }
 
@@ -62,25 +72,39 @@ struct ItemListView: View {
     }
 
     var body: some View {
-        List {
-            Section {
-                submenu
-                    .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 10, trailing: 16))
-                    .listRowBackground(Color.clear)
-                    .listRowSeparator(.hidden)
+        // `visible` filtra i ordena tota la col·lecció: s'avalua UNA vegada per
+        // render, no tres (isEmpty + ForEach + animation), que era el que passava.
+        let rows = visible
+
+        return List {
+            if showsSubmenu {
+                Section {
+                    submenu
+                        .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 10, trailing: 16))
+                        .listRowBackground(Color.clear)
+                        .listRowSeparator(.hidden)
+                }
             }
 
-            if visible.isEmpty {
+            if rows.isEmpty {
                 emptyState
                     .listRowBackground(Color.clear)
                     .listRowSeparator(.hidden)
             } else {
-                ForEach(visible) { item in
-                    ZStack(alignment: .leading) {
-                        NavigationLink { ItemDetailView(item: item) } label: { EmptyView() }
-                            .opacity(0)
-                        ItemRow(item: item, actions: actions)
-                    }
+                ForEach(rows) { item in
+                    // Tocar la fila obre directament el formulari d'edició.
+                    // El detall (sinopsi, enllaç a IMDb/Goodreads…) queda a
+                    // mantenir premut → «Veure detall».
+                    ItemRow(item: item, actions: actions)
+                        .onTapGesture { editing = item }
+                        .contextMenu {
+                            Button { editing = item } label: {
+                                Label("Edita", systemImage: "pencil")
+                            }
+                            Button { detail = item } label: {
+                                Label("Veure detall", systemImage: "info.circle")
+                            }
+                        }
                     .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
                     .listRowBackground(Theme.panel)
                     .swipeActions(edge: .leading, allowsFullSwipe: true) {
@@ -97,7 +121,7 @@ struct ItemListView: View {
                     }
                     .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                         Button(role: .destructive) {
-                            actions.delete(item)
+                            pendingDeletion = item
                         } label: {
                             Label("Elimina", systemImage: "trash")
                         }
@@ -118,7 +142,7 @@ struct ItemListView: View {
                     prompt: Text(section == .kind(.llibre) ? "Cerca per títol o autor…" : "Cerca per títol…"))
         .navigationTitle(section.title)
         .navigationBarTitleDisplayMode(.large)
-        .animation(.snappy(duration: 0.25), value: visible.count)
+        .animation(.snappy(duration: 0.25), value: rows.count)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button { showingNew = true } label: { Image(systemName: "plus") }
@@ -141,6 +165,26 @@ struct ItemListView: View {
         }
         .sheet(isPresented: $showingNew) {
             ItemFormView(mode: .create(kind: kindFilter ?? section.defaultKind))
+        }
+        .sheet(item: $editing) { item in
+            ItemFormView(mode: .edit(item))
+        }
+        .navigationDestination(item: $detail) { item in
+            ItemDetailView(item: item)
+        }
+        .confirmationDialog(
+            "Segur que vols eliminar «\(pendingDeletion?.title ?? "")»?",
+            isPresented: Binding(get: { pendingDeletion != nil },
+                                 set: { if !$0 { pendingDeletion = nil } }),
+            titleVisibility: .visible
+        ) {
+            Button("Elimina", role: .destructive) {
+                if let item = pendingDeletion { actions.delete(item) }
+                pendingDeletion = nil
+            }
+            Button("Cancel·la", role: .cancel) { pendingDeletion = nil }
+        } message: {
+            Text("La podràs recuperar amb «Desfés» mentre no tanquis l'app.")
         }
     }
 
@@ -212,10 +256,10 @@ struct ItemListView: View {
     private var emptyState: some View {
         VStack(spacing: 6) {
             Text("Cap fitxa trobada")
-                .font(.headline)
+                .font(.app(.headline))
                 .foregroundStyle(Theme.inkDim)
             Text("Prova de canviar els filtres o afegeix-ne una de nova.")
-                .font(.footnote)
+                .font(.app(.footnote))
                 .foregroundStyle(Theme.inkFaint)
                 .multilineTextAlignment(.center)
         }

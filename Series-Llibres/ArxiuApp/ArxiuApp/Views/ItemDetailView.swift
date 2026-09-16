@@ -15,7 +15,22 @@ struct ItemDetailView: View {
         LibraryActions(context: context, history: history)
     }
 
+    /// Si la fitxa s'ha eliminat des d'una altra pantalla (p. ex. el swipe de la
+    /// llista mentre el detall era obert), llegir-ne les propietats és accedir a
+    /// un objecte ja esborrat del context: el patró clàssic de crash de SwiftData.
     var body: some View {
+        if item.isDeleted || item.modelContext == nil {
+            ContentUnavailableView(
+                "Fitxa eliminada",
+                systemImage: "trash",
+                description: Text("Aquesta fitxa ja no existeix. Pots recuperar-la amb «Desfés» si acabes d'esborrar-la.")
+            )
+        } else {
+            content
+        }
+    }
+
+    private var content: some View {
         List {
             Section {
                 header
@@ -59,7 +74,7 @@ struct ItemDetailView: View {
             if let plot = item.plot, !plot.isEmpty {
                 Section("Sinopsi") {
                     Text(plot)
-                        .font(.callout)
+                        .font(.app(.callout))
                         .foregroundStyle(Theme.inkDim)
                 }
             }
@@ -80,6 +95,8 @@ struct ItemDetailView: View {
                 }
             }
         }
+        .scrollContentBackground(.hidden)
+        .background(Theme.bg)
         .navigationTitle(item.title)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -110,13 +127,13 @@ struct ItemDetailView: View {
                 .frame(width: 56, height: 56)
                 .overlay {
                     Image(systemName: item.kind.symbol)
-                        .font(.title3.weight(.semibold))
+                        .font(.app(.title3))
                         .foregroundStyle(.white)
                 }
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(item.title)
-                    .font(.title3.weight(.bold))
+                    .font(.app(.title3))
                     .foregroundStyle(Theme.ink)
 
                 HStack(spacing: 6) {
@@ -124,7 +141,7 @@ struct ItemDetailView: View {
                     if let badge = item.seasonBadge { Text("· \(badge)") }
                     if let year = item.year { Text("· \(String(year))") }
                 }
-                .font(.footnote)
+                .font(.app(.footnote))
                 .foregroundStyle(Theme.inkDim)
             }
         }

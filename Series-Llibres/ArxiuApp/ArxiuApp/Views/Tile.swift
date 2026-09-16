@@ -11,9 +11,9 @@ struct Tile: View {
         var height: CGFloat { self == .large ? Theme.tileHeight : Theme.smallTileHeight }
         var corner: CGFloat { self == .large ? Theme.tileCorner : 13 }
         var padding: CGFloat { self == .large ? 14 : 10 }
-        var iconFont: Font { self == .large ? .title3.weight(.semibold) : .caption.weight(.semibold) }
-        var countFont: Font { self == .large ? .title2.weight(.bold) : .subheadline.weight(.bold) }
-        var labelFont: Font { self == .large ? .subheadline.weight(.semibold) : .caption2.weight(.semibold) }
+        var iconFont: Font { self == .large ? .app(.title3) : .app(.caption) }
+        var countFont: Font { self == .large ? .app(.title2) : .app(.subheadline) }
+        var labelFont: Font { self == .large ? .app(.subheadline) : .app(.caption2) }
     }
 
     let symbol: String
@@ -24,6 +24,56 @@ struct Tile: View {
     var selected: Bool = true
 
     var body: some View {
+        Group {
+            if size == .large { largeLayout } else { smallLayout }
+        }
+        .foregroundStyle(selected ? .white : color)
+        .frame(maxWidth: .infinity, minHeight: size.height, alignment: .leading)
+        .background {
+            RoundedRectangle(cornerRadius: size.corner, style: .continuous)
+                .fill(selected ? AnyShapeStyle(color.gradient) : AnyShapeStyle(color.opacity(0.13)))
+        }
+        .overlay {
+            RoundedRectangle(cornerRadius: size.corner, style: .continuous)
+                .strokeBorder(.white.opacity(selected ? 0.18 : 0), lineWidth: 1)
+        }
+        .shadow(color: selected ? color.opacity(0.28) : .clear,
+                radius: size == .large ? 8 : 4, y: size == .large ? 4 : 2)
+        .contentShape(RoundedRectangle(cornerRadius: size.corner, style: .continuous))
+        .animation(.snappy(duration: 0.22), value: selected)
+    }
+
+    /// Botó de secció de la pantalla d'entrada: icona gran al centre, etiqueta
+    /// gran a sota i el comptador discret a la cantonada superior dreta.
+    private var largeLayout: some View {
+        VStack(spacing: 10) {
+            Image(systemName: symbol)
+                .font(.system(size: 46, weight: .regular))
+                .symbolRenderingMode(.hierarchical)
+                .frame(height: 52)
+            Text(label)
+                .font(.app(size: 24, relativeTo: .title2))
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding(size.padding)
+        .overlay(alignment: .topTrailing) {
+            if let count {
+                Text("\(count)")
+                    .font(.app(size: 15, relativeTo: .subheadline))
+                    .monospacedDigit()
+                    .padding(.horizontal, 9)
+                    .padding(.vertical, 3)
+                    .background(Capsule().fill(.white.opacity(selected ? 0.22 : 0.0)))
+                    .overlay(Capsule().strokeBorder(color.opacity(selected ? 0 : 0.35), lineWidth: 1))
+                    .padding(10)
+            }
+        }
+    }
+
+    /// Tile petit del submenú de les llistes (sense canvis de disposició).
+    private var smallLayout: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .top, spacing: 4) {
                 Image(systemName: symbol)
@@ -43,21 +93,7 @@ struct Tile: View {
                 .lineLimit(1)
                 .minimumScaleFactor(0.75)
         }
-        .foregroundStyle(selected ? .white : color)
         .padding(size.padding)
-        .frame(maxWidth: .infinity, minHeight: size.height, alignment: .leading)
-        .background {
-            RoundedRectangle(cornerRadius: size.corner, style: .continuous)
-                .fill(selected ? AnyShapeStyle(color.gradient) : AnyShapeStyle(color.opacity(0.13)))
-        }
-        .overlay {
-            RoundedRectangle(cornerRadius: size.corner, style: .continuous)
-                .strokeBorder(.white.opacity(selected ? 0.18 : 0), lineWidth: 1)
-        }
-        .shadow(color: selected ? color.opacity(0.28) : .clear,
-                radius: size == .large ? 8 : 4, y: size == .large ? 4 : 2)
-        .contentShape(RoundedRectangle(cornerRadius: size.corner, style: .continuous))
-        .animation(.snappy(duration: 0.22), value: selected)
     }
 }
 

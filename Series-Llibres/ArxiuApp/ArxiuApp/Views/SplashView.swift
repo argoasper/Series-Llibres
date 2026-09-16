@@ -24,10 +24,10 @@ struct SplashView: View {
 
                 VStack(spacing: 6) {
                     Text("El Meu Arxiu")
-                        .font(.title2.weight(.bold))
+                        .font(.app(.title2))
                         .foregroundStyle(Theme.ink)
                     Text("Sèries · Pel·lícules · Llibres")
-                        .font(.footnote)
+                        .font(.app(.footnote))
                         .foregroundStyle(Theme.inkDim)
                 }
                 .opacity(appeared ? 1 : 0)
