@@ -1,0 +1,1478 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>El Meu Arxiu — Sèries, Pel·lícules i Llibres</title>
+<style>
+  @font-face{
+    font-family:'Aptos';
+    src: local('Aptos'), local('Aptos-Regular');
+    font-weight:400;
+  }
+  @font-face{
+    font-family:'Aptos';
+    src: local('Aptos SemiBold'), local('Aptos-SemiBold');
+    font-weight:600;
+  }
+  @font-face{
+    font-family:'Aptos';
+    src: local('Aptos Display'), local('Aptos-Display'), local('Aptos Bold'), local('Aptos-Bold');
+    font-weight:700;
+  }
+  :root{
+    --bg: #fbfbfa;
+    --panel: #ffffff;
+    --line: #e7e5e0;
+    --line-soft: #f0efec;
+    --ink: #22231f;
+    --ink-dim: #6b6a63;
+    --ink-faint: #a3a199;
+    --accent: #3f6659;
+    --accent-soft: #e6ede9;
+    --tag-serie: #6b7f9e;
+    --tag-peli: #a9834f;
+    --tag-llibre: #7d6b9e;
+    --danger: #b3554a;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Aptos','Aptos Display','Segoe UI Variable','Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;
+    min-height:100vh;
+    padding-bottom:80px;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{ color:var(--accent); }
+
+  /* ---------- Header ---------- */
+  header.masthead{
+    padding:44px 24px 0;
+    max-width:920px;
+    margin:0 auto;
+    position:relative;
+  }
+  .eyebrow{
+    font-size:11px;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:var(--ink-faint);
+    margin-bottom:6px;
+    font-weight:600;
+  }
+  .title-row{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    flex-wrap:wrap;
+  }
+  .title-icons{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    flex:none;
+  }
+  .title-icons svg{
+    width:38px;
+    height:38px;
+    display:block;
+    filter:drop-shadow(0 3px 5px rgba(0,0,0,0.18));
+  }
+  h1.title{
+    font-weight:700;
+    font-size:clamp(24px,4.2vw,34px);
+    margin:0;
+    letter-spacing:-0.01em;
+  }
+  .sub{
+    font-size:13px;
+    color:var(--ink-dim);
+    margin-top:6px;
+  }
+  .settings-btn{
+    position:absolute;
+    top:44px;
+    right:24px;
+    width:36px;
+    height:36px;
+    border-radius:50%;
+    border:1px solid var(--line);
+    background:var(--panel);
+    color:var(--ink-dim);
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;
+    transition:.15s;
+  }
+  .settings-btn:hover{ color:var(--accent); border-color:var(--accent); }
+
+  .header-actions{
+    display:flex;
+    gap:8px;
+    margin-top:14px;
+  }
+  .icon-btn{
+    width:32px;
+    height:32px;
+    border-radius:7px;
+    border:1px solid var(--line);
+    background:var(--panel);
+    color:var(--ink-dim);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    transition:.12s;
+    padding:0;
+  }
+  .icon-btn svg{ width:15px; height:15px; }
+  .icon-btn:hover{ color:var(--accent); border-color:var(--accent); background:var(--accent-soft); }
+  .icon-btn.icon-green{ color:#3f8a5c; border-color:#cfe8d8; background:#eef8f1; }
+  .icon-btn.icon-green:hover{ color:#2c6b44; border-color:#3f8a5c; background:#e0f2e6; }
+  .icon-btn.icon-orange{ color:#b8712f; border-color:#f0dcbf; background:#fdf3e6; }
+  .icon-btn.icon-orange:hover{ color:#96591f; border-color:#b8712f; background:#faebd4; }
+  .icon-btn.icon-blue{ color:#3b6ea5; border-color:#c9dcef; background:#eaf2fb; }
+  .icon-btn.icon-blue:hover{ color:#2a5079; border-color:#3b6ea5; background:#dcebfa; }
+  .icon-btn.icon-blue.linked{ box-shadow: inset 0 0 0 1.5px #3b6ea5; }
+
+  .row-link{
+    flex:none;
+    width:22px;height:22px;
+    border-radius:6px;
+    display:flex;align-items:center;justify-content:center;
+    color:var(--ink-faint);
+    transition:.12s;
+  }
+  .row-link:hover{ color:var(--accent); background:var(--accent-soft); }
+  .row-link svg{ width:13px; height:13px; }
+  .row-link.row-link-imdb{ width:26px; }
+  .row-link.row-link-imdb:hover{ background:none; }
+  .row-link.row-link-imdb svg{ width:22px; height:22px; }
+
+  .header-rule{
+    max-width:920px;
+    margin:26px auto 0;
+    height:1px;
+    background:var(--line);
+  }
+
+  /* ---------- Tabs ---------- */
+  .tabs-wrap{
+    max-width:920px;
+    margin:0 auto;
+    padding:22px 24px 0;
+    display:flex;
+    gap:24px;
+  }
+  .tab{
+    font-size:14px;
+    font-weight:600;
+    padding:0 0 12px;
+    color:var(--ink-faint);
+    cursor:pointer;
+    border-bottom:2px solid transparent;
+    transition:.15s;
+  }
+  .tab .count{ color:var(--ink-faint); font-weight:400; margin-left:4px; }
+  .tab.active{ color:var(--ink); border-bottom-color:var(--accent); }
+  .tab:hover:not(.active){ color:var(--ink-dim); }
+
+  /* ---------- Panel ---------- */
+  main.panel{
+    max-width:920px;
+    margin:0 auto;
+    padding:20px 24px 0;
+  }
+
+  .toolbar{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    align-items:center;
+    margin-bottom:18px;
+  }
+  .search-box{
+    flex:1 1 200px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:7px;
+    padding:8px 12px;
+  }
+  .search-box svg{ flex:none; opacity:.4; width:14px; height:14px; }
+  .search-box input{
+    background:none;
+    border:none;
+    outline:none;
+    color:var(--ink);
+    font-family:inherit;
+    font-size:13px;
+    width:100%;
+  }
+  .search-box input::placeholder{ color:var(--ink-faint); }
+
+  select.filter-select{
+    background:var(--panel);
+    border:1px solid var(--line);
+    color:var(--ink-dim);
+    font-family:inherit;
+    font-size:12.5px;
+    padding:8px 10px;
+    border-radius:7px;
+    outline:none;
+    cursor:pointer;
+  }
+
+  .chip-group{ display:flex; gap:5px; }
+  .chip{
+    font-size:12px;
+    padding:7px 11px;
+    border-radius:20px;
+    border:1px solid var(--line);
+    color:var(--ink-dim);
+    cursor:pointer;
+    background:var(--panel);
+    transition:.12s;
+    white-space:nowrap;
+  }
+  .chip:hover{ border-color:var(--ink-faint); }
+  .chip.active{ background:var(--accent-soft); border-color:var(--accent); color:var(--accent); font-weight:600; }
+
+  .btn{
+    font-family:inherit;
+    font-size:13px;
+    font-weight:600;
+    padding:9px 15px;
+    border-radius:7px;
+    border:1px solid var(--line);
+    background:var(--panel);
+    color:var(--ink);
+    cursor:pointer;
+    transition:.12s;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    white-space:nowrap;
+  }
+  .btn:hover{ border-color:var(--accent); color:var(--accent); }
+  .btn-primary{
+    background:var(--accent);
+    border-color:var(--accent);
+    color:#fff;
+  }
+  .btn-primary:hover{ background:#345449; color:#fff; border-color:#345449;}
+  .btn-danger:hover{ border-color:var(--danger); color:var(--danger); }
+  .btn-ghost{ background:none; font-weight:500; color:var(--ink-dim); border-color:transparent;}
+  .btn-ghost:hover{ background:var(--line-soft); color:var(--ink); border-color:transparent;}
+
+  .toolbar-spacer{ flex:1 1 auto; }
+
+  /* ---------- Row list ---------- */
+  .list{
+    border-top:1px solid var(--line);
+  }
+  .row{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    padding:12px 4px;
+    border-bottom:1px solid var(--line-soft);
+    cursor:pointer;
+    transition:background .1s;
+  }
+  .row:hover{ background:var(--line-soft); }
+
+  .check{
+    flex:none;
+    width:19px;height:19px;
+    border-radius:50%;
+    border:1.5px solid var(--ink-faint);
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;
+    transition:.12s;
+  }
+  .check:hover{ border-color:var(--accent); }
+  .check.done{
+    background:var(--accent);
+    border-color:var(--accent);
+  }
+  .check.done svg{ display:block; }
+  .check svg{ display:none; width:11px; height:11px; stroke:#fff; stroke-width:3; }
+  .check.inprogress{
+    border-color:var(--tag-peli);
+    background:repeating-conic-gradient(var(--tag-peli) 0% 25%, transparent 0% 50%);
+  }
+
+  .row-title{
+    font-weight:600;
+    font-size:14.5px;
+    flex:1 1 auto;
+    min-width:0;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .row-author{
+    font-weight:400;
+    color:var(--ink-dim);
+  }
+
+  .row-tag{
+    flex:none;
+    font-size:11px;
+    font-weight:600;
+    padding:3px 8px;
+    border-radius:5px;
+    text-transform:uppercase;
+    letter-spacing:.02em;
+  }
+  .row-tag.serie{ background:#e8edf3; color:var(--tag-serie); }
+  .row-tag.peli{ background:#f3ece0; color:var(--tag-peli); }
+
+  .row-year{
+    flex:none;
+    width:44px;
+    text-align:right;
+    font-size:12.5px;
+    color:var(--ink-faint);
+    font-variant-numeric:tabular-nums;
+  }
+
+  .row-rating{
+    flex:none;
+    font-size:12px;
+    color:var(--tag-peli);
+    width:36px;
+    text-align:right;
+  }
+
+  .row-chevron{
+    flex:none;
+    color:var(--ink-faint);
+    font-size:15px;
+  }
+
+  .row-status-label{
+    flex:none;
+    font-size:11px;
+    color:var(--tag-peli);
+    font-weight:600;
+    text-transform:uppercase;
+    letter-spacing:.02em;
+  }
+
+  .empty-state{
+    text-align:center;
+    padding:60px 20px;
+    color:var(--ink-faint);
+    font-size:13.5px;
+  }
+  .empty-state .big{
+    font-weight:700;
+    font-size:18px;
+    color:var(--ink-dim);
+    display:block;
+    margin-bottom:6px;
+  }
+
+  /* ---------- Modal ---------- */
+  .overlay{
+    position:fixed; inset:0;
+    background:rgba(30,30,26,0.35);
+    display:none;
+    align-items:flex-start;
+    justify-content:center;
+    padding:6vh 20px;
+    z-index:50;
+    overflow-y:auto;
+  }
+  .overlay.show{ display:flex; }
+  .modal{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:12px;
+    width:100%;
+    max-width:480px;
+    padding:26px 26px 22px;
+    box-shadow:0 20px 50px rgba(30,30,26,0.14);
+    position:relative;
+  }
+  .modal-close{
+    position:absolute; top:16px; right:16px;
+    width:28px;height:28px;
+    border-radius:50%;
+    border:1px solid var(--line);
+    background:none; color:var(--ink-faint);
+    cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    font-size:14px;
+  }
+  .modal-close:hover{ color:var(--danger); border-color:var(--danger); }
+  .modal h2{
+    font-size:19px;
+    font-weight:700;
+    margin:0 0 3px;
+    padding-right:30px;
+  }
+  .modal .modal-sub{
+    font-size:12px;
+    color:var(--ink-faint);
+    margin-bottom:20px;
+  }
+  .field{ margin-bottom:14px; }
+  .field label{
+    display:block;
+    font-size:11.5px;
+    font-weight:600;
+    color:var(--ink-dim);
+    margin-bottom:6px;
+  }
+  .field input, .field select, .field textarea{
+    width:100%;
+    background:var(--bg);
+    border:1px solid var(--line);
+    border-radius:7px;
+    padding:9px 11px;
+    color:var(--ink);
+    font-family:inherit;
+    font-size:14px;
+    outline:none;
+  }
+  .field textarea{ resize:vertical; min-height:60px; font-size:13px; line-height:1.5;}
+  .field input:focus, .field select:focus, .field textarea:focus{ border-color:var(--accent); }
+  .field-row{ display:flex; gap:10px; }
+  .field-row .field{ flex:1; }
+
+  .fetch-info-box{
+    font-size:12.5px;
+    color:var(--ink-dim);
+    line-height:1.55;
+    margin-bottom:16px;
+    background:var(--bg);
+    border:1px solid var(--line-soft);
+    border-radius:7px;
+    padding:12px 14px;
+    display:none;
+  }
+  .fetch-info-box a{ font-size:12px; font-weight:600; }
+  .fetch-info-box .badge{
+    display:inline-block;
+    background:var(--accent-soft);
+    color:var(--accent);
+    font-size:11px;
+    font-weight:700;
+    padding:2px 7px;
+    border-radius:4px;
+    margin-right:6px;
+  }
+
+  .modal-actions{
+    display:flex;
+    gap:10px;
+    margin-top:20px;
+    flex-wrap:wrap;
+  }
+  .modal-actions .btn{ flex:none; }
+  .status-toggle{ display:flex; gap:8px; }
+  .status-toggle .chip{ flex:1; text-align:center; }
+
+  .fetch-status{
+    font-size:12px;
+    color:var(--ink-faint);
+    margin-top:8px;
+    min-height:14px;
+  }
+  .fetch-status.error{ color:var(--danger); }
+  .fetch-status.ok{ color:var(--accent); }
+
+  .settings-note{
+    font-size:12.5px;
+    color:var(--ink-dim);
+    line-height:1.6;
+    margin-bottom:16px;
+    background:var(--bg);
+    border:1px solid var(--line-soft);
+    border-radius:7px;
+    padding:12px 14px;
+  }
+  .settings-note code{
+    background:var(--accent-soft);
+    color:var(--accent);
+    padding:1px 5px;
+    border-radius:3px;
+    font-size:11.5px;
+  }
+
+  footer.foot{
+    max-width:920px;
+    margin:30px auto 0;
+    padding:0 24px;
+    text-align:center;
+    color:var(--ink-faint);
+    font-size:11.5px;
+  }
+
+  .stats-line{
+    font-size:12px;
+    color:var(--ink-faint);
+  }
+
+  .toast{
+    position:fixed;
+    bottom:24px; left:50%;
+    transform:translateX(-50%) translateY(20px);
+    background:var(--ink);
+    color:#fff;
+    font-size:12.5px;
+    font-weight:600;
+    padding:10px 18px;
+    border-radius:7px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.2);
+    opacity:0;
+    pointer-events:none;
+    transition:.25s;
+    z-index:100;
+  }
+  .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+  @media (max-width:600px){
+    header.masthead{ padding:30px 16px 0; }
+    .settings-btn{ top:30px; right:16px; }
+    main.panel{ padding:16px 16px 0; }
+    .tabs-wrap{ padding:18px 16px 0; }
+    footer.foot{ padding:0 16px; }
+    .row-tag{ display:none; }
+    .row-year{ width:34px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="eyebrow">Catàleg personal</div>
+  <div class="title-row">
+    <div class="title-icons">
+      <!-- TV -->
+      <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="tvBody" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#3a3d42"/>
+            <stop offset="100%" stop-color="#131417"/>
+          </linearGradient>
+          <linearGradient id="tvScreen" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#4a7bc9"/>
+            <stop offset="45%" stop-color="#20304f"/>
+            <stop offset="100%" stop-color="#0a0e18"/>
+          </linearGradient>
+          <linearGradient id="tvGlare" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#ffffff" stop-opacity="0.35"/>
+            <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+          </linearGradient>
+          <linearGradient id="tvStand" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#4a4d52"/>
+            <stop offset="100%" stop-color="#1c1d20"/>
+          </linearGradient>
+        </defs>
+        <rect x="6" y="10" width="52" height="34" rx="4" fill="url(#tvBody)"/>
+        <rect x="10.5" y="14.5" width="43" height="25" rx="1.5" fill="url(#tvScreen)"/>
+        <path d="M11 15 L28 33 L11 39 Z" fill="url(#tvGlare)"/>
+        <rect x="26" y="44" width="12" height="7" fill="url(#tvStand)"/>
+        <rect x="16" y="51" width="32" height="4" rx="2" fill="url(#tvStand)"/>
+        <circle cx="52" cy="18" r="1.3" fill="#7fdc9a"/>
+      </svg>
+      <!-- Projector -->
+      <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="projBody" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#8a8f96"/>
+            <stop offset="55%" stop-color="#585c62"/>
+            <stop offset="100%" stop-color="#302f33"/>
+          </linearGradient>
+          <radialGradient id="projLens" cx="35%" cy="35%" r="70%">
+            <stop offset="0%" stop-color="#eaf3ff"/>
+            <stop offset="35%" stop-color="#6fa8dc"/>
+            <stop offset="75%" stop-color="#1b3a5c"/>
+            <stop offset="100%" stop-color="#0a1420"/>
+          </radialGradient>
+          <linearGradient id="reelGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#3d3d3d"/>
+            <stop offset="100%" stop-color="#131313"/>
+          </linearGradient>
+        </defs>
+        <circle cx="16" cy="16" r="9" fill="url(#reelGrad)"/>
+        <circle cx="16" cy="16" r="3" fill="#8a8a8a"/>
+        <circle cx="16" cy="10" r="1.6" fill="#0a0a0a"/>
+        <circle cx="11" cy="20" r="1.6" fill="#0a0a0a"/>
+        <circle cx="21" cy="20" r="1.6" fill="#0a0a0a"/>
+        <circle cx="46" cy="14" r="7.5" fill="url(#reelGrad)"/>
+        <circle cx="46" cy="14" r="2.6" fill="#8a8a8a"/>
+        <rect x="10" y="26" width="44" height="20" rx="5" fill="url(#projBody)"/>
+        <circle cx="46" cy="36" r="10" fill="#232326"/>
+        <circle cx="46" cy="36" r="8" fill="url(#projLens)"/>
+        <circle cx="42" cy="32" r="2" fill="#ffffff" fill-opacity="0.55"/>
+        <rect x="14" y="31" width="10" height="10" rx="2" fill="#1f2023"/>
+        <rect x="16" y="33" width="6" height="6" rx="1" fill="#4a94d8"/>
+        <rect x="18" y="45" width="8" height="6" fill="#3a3a3d"/>
+        <rect x="40" y="45" width="8" height="6" fill="#3a3a3d"/>
+      </svg>
+      <!-- Book -->
+      <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="bookCover" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#9c3b3b"/>
+            <stop offset="55%" stop-color="#7a2a2a"/>
+            <stop offset="100%" stop-color="#4f1717"/>
+          </linearGradient>
+          <linearGradient id="bookSpine" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#3a1010"/>
+            <stop offset="100%" stop-color="#5c1e1e"/>
+          </linearGradient>
+          <linearGradient id="pageGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#fffdf7"/>
+            <stop offset="100%" stop-color="#e8e2d0"/>
+          </linearGradient>
+        </defs>
+        <rect x="12" y="10" width="6" height="44" fill="url(#bookSpine)"/>
+        <path d="M18 10 H50 a4 4 0 0 1 4 4 V50 a4 4 0 0 1 -4 4 H18 Z" fill="url(#bookCover)"/>
+        <path d="M46 14 H50 a2 2 0 0 1 2 2 V48 a2 2 0 0 1 -2 2 H46 Z" fill="url(#pageGrad)"/>
+        <rect x="46" y="16" width="4" height="1.4" fill="#c9bfa0"/>
+        <rect x="46" y="20" width="4" height="1.4" fill="#c9bfa0"/>
+        <rect x="46" y="24" width="4" height="1.4" fill="#c9bfa0"/>
+        <rect x="46" y="28" width="4" height="1.4" fill="#c9bfa0"/>
+        <rect x="46" y="32" width="4" height="1.4" fill="#c9bfa0"/>
+        <path d="M23 20 h22 M23 26 h22 M23 32 h14" stroke="#e7c56a" stroke-width="1.3" stroke-linecap="round" opacity="0.85"/>
+        <path d="M18 10 H50" stroke="#000000" stroke-opacity="0.15" stroke-width="1"/>
+      </svg>
+    </div>
+    <h1 class="title">Sèries · Pel·lícules · Llibres</h1>
+  </div>
+  <div class="header-actions">
+    <button class="icon-btn icon-green" id="exportBtn" title="Exporta backup (JSON)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 21h16"/></svg>
+    </button>
+    <button class="icon-btn icon-orange" id="importBtn" title="Importa backup (JSON)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3"/><path d="M7 8l5-5 5 5"/><path d="M4 21h16"/></svg>
+    </button>
+    <button class="icon-btn icon-blue" id="saveToFileBtn" title="Desa els canvis sobre aquest mateix fitxer HTML (només Chrome/Edge)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><path d="M17 21v-8H7v8"/><path d="M7 3v5h8"/></svg>
+    </button>
+    <input type="file" id="importFile" accept=".json" style="display:none;">
+  </div>
+  <button class="settings-btn" id="settingsBtn" title="Ajustos / clau API">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.65 1.65 0 004.6 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06A1.65 1.65 0 009 4.6a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+  </button>
+</header>
+<div class="header-rule"></div>
+
+<div class="tabs-wrap">
+  <div class="tab active" data-tab="media">Sèries &amp; Pel·lícules <span class="count" id="countMedia"></span></div>
+  <div class="tab" data-tab="books">Llibres <span class="count" id="countBooks"></span></div>
+</div>
+
+<main class="panel">
+
+  <!-- MEDIA VIEW -->
+  <div id="view-media">
+    <div class="toolbar">
+      <div class="search-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input type="text" id="mediaSearch" placeholder="Cerca per títol…">
+      </div>
+      <div class="chip-group" id="mediaTypeFilter">
+        <div class="chip active" data-val="all">Tot</div>
+        <div class="chip" data-val="serie">Sèries</div>
+        <div class="chip" data-val="peli">Pel·lícules</div>
+      </div>
+      <div class="chip-group" id="mediaStatusFilter">
+        <div class="chip active" data-val="all">Tot</div>
+        <div class="chip" data-val="veient">Veient</div>
+        <div class="chip" data-val="vist">Vist</div>
+      </div>
+      <select class="filter-select" id="mediaSort">
+        <option value="title">A–Z</option>
+        <option value="year-desc">Any ↓</option>
+        <option value="year-asc">Any ↑</option>
+      </select>
+      <div class="toolbar-spacer"></div>
+      <button class="btn btn-primary" id="addMediaBtn">+ Nova fitxa</button>
+    </div>
+    <div class="list" id="mediaGrid"></div>
+  </div>
+
+  <!-- BOOKS VIEW -->
+  <div id="view-books" style="display:none;">
+    <div class="toolbar">
+      <div class="search-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input type="text" id="bookSearch" placeholder="Cerca per títol o autor…">
+      </div>
+      <div class="chip-group" id="bookStatusFilter">
+        <div class="chip active" data-val="all">Tot</div>
+        <div class="chip" data-val="pendent">Pendent</div>
+        <div class="chip" data-val="llegit">Llegit</div>
+      </div>
+      <select class="filter-select" id="bookSort">
+        <option value="title">Títol A–Z</option>
+        <option value="author">Autor A–Z</option>
+        <option value="year-desc">Any ↓</option>
+        <option value="year-asc">Any ↑</option>
+      </select>
+      <div class="toolbar-spacer"></div>
+      <button class="btn btn-primary" id="addBookBtn">+ Nova fitxa</button>
+    </div>
+    <div class="list" id="booksGrid"></div>
+  </div>
+
+  <div style="margin-top:18px; border-top:1px solid var(--line); padding-top:14px; text-align:right;">
+    <span class="stats-line" id="statsLine"></span>
+  </div>
+</main>
+
+<footer class="foot">Dades desades només en aquest navegador · cap servidor implicat</footer>
+
+<!-- MEDIA DETAIL/EDIT MODAL -->
+<div class="overlay" id="mediaModal">
+  <div class="modal">
+    <button class="modal-close" data-close>✕</button>
+    <h2 id="mediaModalTitle">Nova fitxa</h2>
+    <div class="modal-sub" id="mediaModalSub">Sèrie o pel·lícula</div>
+
+    <div class="fetch-info-box" id="mediaFetchInfo"></div>
+
+    <input type="hidden" id="mediaId">
+    <div class="field">
+      <label>Títol</label>
+      <input type="text" id="mediaTitle" placeholder="p.ex. Breaking Bad">
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Any</label>
+        <input type="number" id="mediaYear" placeholder="2023">
+      </div>
+      <div class="field">
+        <label>Tipus</label>
+        <select id="mediaType">
+          <option value="serie">Sèrie</option>
+          <option value="peli">Pel·lícula</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label>Estat</label>
+      <div class="status-toggle">
+        <div class="chip active" data-status="vist">Vist</div>
+        <div class="chip" data-status="veient">Veient ara</div>
+      </div>
+    </div>
+
+    <div class="fetch-status" id="mediaFetchStatus"></div>
+
+    <div class="modal-actions">
+      <button class="btn" id="mediaFetchBtn">Cerca info (IMDb)</button>
+      <button class="btn btn-primary" id="mediaSaveBtn">Desa</button>
+      <button class="btn btn-danger" id="mediaDeleteBtn" style="display:none;">Elimina</button>
+    </div>
+  </div>
+</div>
+
+<!-- BOOK DETAIL/EDIT MODAL -->
+<div class="overlay" id="bookModal">
+  <div class="modal">
+    <button class="modal-close" data-close>✕</button>
+    <h2 id="bookModalTitle">Nova fitxa</h2>
+    <div class="modal-sub">Llibre</div>
+
+    <div class="fetch-info-box" id="bookFetchInfo"></div>
+
+    <input type="hidden" id="bookId">
+    <div class="field">
+      <label>Títol</label>
+      <input type="text" id="bookTitle" placeholder="p.ex. Fundació">
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Autor</label>
+        <input type="text" id="bookAuthor" placeholder="Isaac Asimov">
+      </div>
+      <div class="field">
+        <label>Any</label>
+        <input type="number" id="bookYear" placeholder="2001">
+      </div>
+    </div>
+    <div class="field">
+      <label>Estat</label>
+      <div class="status-toggle" id="bookStatusToggle">
+        <div class="chip active" data-status="llegit">Llegit</div>
+        <div class="chip" data-status="pendent">Pendent</div>
+      </div>
+    </div>
+
+    <div class="fetch-status" id="bookFetchStatus"></div>
+
+    <div class="modal-actions">
+      <button class="btn" id="bookFetchBtn">Cerca info (Google Books)</button>
+      <button class="btn btn-primary" id="bookSaveBtn">Desa</button>
+      <button class="btn btn-danger" id="bookDeleteBtn" style="display:none;">Elimina</button>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS MODAL -->
+<div class="overlay" id="settingsModal">
+  <div class="modal">
+    <button class="modal-close" data-close>✕</button>
+    <h2>Ajustos</h2>
+    <div class="modal-sub">Clau API</div>
+    <div class="settings-note">
+      Per obtenir valoracions i enllaços a IMDb cal una clau gratuïta d'<a href="https://www.omdbapi.com/apikey.aspx" target="_blank" rel="noopener">OMDb API</a>. Es desa només al teu navegador (localStorage), mai s'envia enlloc més. Per als llibres no cal cap clau (Google Books és lliure).
+    </div>
+    <div class="field">
+      <label>Clau OMDb API</label>
+      <input type="text" id="omdbKeyInput" placeholder="p.ex. a1b2c3d4">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-primary" id="saveSettingsBtn">Desa clau</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============ SEED DATA (importada del Numbers original) ============ */
+const SEED_MEDIA = [{"id": 1, "title": "The Hack (miniserie)", "year": 2026, "type": "serie", "status": "veient"}, {"id": 2, "title": "Rooster (T1)", "year": 2025, "type": "serie", "status": "veient"}, {"id": 3, "title": "La Casa del Dragón (T3)", "year": 2026, "type": "serie", "status": "veient"}, {"id": 4, "title": "Mad Men (T6)", "year": null, "type": "serie", "status": "veient"}, {"id": 5, "title": "Ciclos (t5)", "year": 2026, "type": "serie", "status": "veient"}, {"id": 6, "title": "Monarch: Legado de monstruos (T2)", "year": 2023, "type": "serie", "status": "vist"}, {"id": 7, "title": "Legítima Defensa (T1)", "year": 2025, "type": "serie", "status": "vist"}, {"id": 8, "title": "Vicios Ocultos", "year": 2025, "type": "serie", "status": "vist"}, {"id": 9, "title": "Mil Golpes (T2)", "year": 2025, "type": "serie", "status": "vist"}, {"id": 10, "title": "Cross (T2)", "year": 2025, "type": "serie", "status": "vist"}, {"id": 11, "title": "El caballero de los Siete Reinos (t1)", "year": 2025, "type": "serie", "status": "vist"}, {"id": 12, "title": "Star City (T1)", "year": 2026, "type": "serie", "status": "vist"}, {"id": 13, "title": "Dutton Ranch (T1)", "year": 2026, "type": "serie", "status": "vist"}, {"id": 14, "title": "Widows Bay (T1)", "year": null, "type": "serie", "status": "vist"}, {"id": 15, "title": "The Boys (T5)", "year": 2026, "type": "serie", "status": "vist"}, {"id": 16, "title": "Monarch: Legado de monstruos (T2)", "year": 2023, "type": "serie", "status": "vist"}, {"id": 17, "title": "Tulsa King (T3)", "year": 2025, "type": "serie", "status": "vist"}, {"id": 18, "title": "The Pitt (T2)", "year": 2025, "type": "serie", "status": "vist"}, {"id": 19, "title": "Gomorra Origin (T1)", "year": 2025, "type": "serie", "status": "vist"}, {"id": 20, "title": "Hijack (T2)", "year": 2024, "type": "serie", "status": "vist"}, {"id": 21, "title": "Paradise (T2)", "year": 2023, "type": "serie", "status": "vist"}, {"id": 22, "title": "Fallout (T2)", "year": 2024, "type": "serie", "status": "vist"}, {"id": 23, "title": "Proyecto Salvación", "year": 2026, "type": "serie", "status": "vist"}, {"id": 24, "title": "Drop of Gods (T2)", "year": 2026, "type": "serie", "status": "vist"}, {"id": 25, "title": "Nuremberg (2025)", "year": 2025, "type": "peli", "status": "vist"}, {"id": 26, "title": "Industry (T4)", "year": 2020, "type": "serie", "status": "vist"}, {"id": 27, "title": "The Night Manager (T2)", "year": 2026, "type": "serie", "status": "vist"}, {"id": 28, "title": "Teheran (T3)", "year": 2025, "type": "serie", "status": "vist"}, {"id": 29, "title": "Muerte por un rayo (Miniserie)", "year": 2025, "type": "serie", "status": "vist"}, {"id": 30, "title": "Landman (T2)", "year": 2024, "type": "serie", "status": "vist"}, {"id": 31, "title": "Trigger Point: Fuera de control (T3)", "year": 2022, "type": "serie", "status": "vist"}, {"id": 32, "title": "Drive to Survive (T7)", "year": 2024, "type": "serie", "status": "vist"}, {"id": 33, "title": "Thunderbolts (film)", "year": 2025, "type": "peli", "status": "vist"}, {"id": 34, "title": "Pax Massilia (T1-T2)", "year": 2023, "type": "serie", "status": "vist"}, {"id": 35, "title": "Daredevil Born Again (T2)", "year": 2024, "type": "serie", "status": "vist"}, {"id": 36, "title": "Para toda la humanidad (T5)", "year": 2026, "type": "serie", "status": "vist"}, {"id": 37, "title": "24", "year": 2001, "type": "serie", "status": "vist"}, {"id": 38, "title": "1883", "year": 2021, "type": "serie", "status": "vist"}, {"id": 39, "title": "1923", "year": 2022, "type": "serie", "status": "vist"}, {"id": 40, "title": "¿Arde París?", "year": 1966, "type": "peli", "status": "vist"}, {"id": 41, "title": "[Scrubs]", "year": 2001, "type": "serie", "status": "vist"}, {"id": 42, "title": "11.22.63", "year": 2016, "type": "serie", "status": "vist"}, {"id": 43, "title": "12 Monos (12 Monkeys)", "year": 2015, "type": "serie", "status": "vist"}, {"id": 44, "title": "22 de julio", "year": 2020, "type": "peli", "status": "vist"}, {"id": 45, "title": "37 días", "year": 2014, "type": "serie", "status": "vist"}, {"id": 46, "title": "4 Blocks", "year": 2017, "type": "serie", "status": "vist"}, {"id": 47, "title": "A millones de kilómetros", "year": 2023, "type": "peli", "status": "vist"}, {"id": 48, "title": "A Murder at the End of the World (Asesinato en el fin del mundo)", "year": 2023, "type": "serie", "status": "vist"}, {"id": 49, "title": "Abismo Secreto", "year": 2024, "type": "serie", "status": "vist"}, {"id": 50, "title": "Adolescencia (Boyhood)", "year": 2014, "type": "peli", "status": "vist"}, {"id": 51, "title": "After Life", "year": 2019, "type": "serie", "status": "vist"}, {"id": 52, "title": "Ahsoka", "year": 2023, "type": "serie", "status": "vist"}, {"id": 53, "title": "Air", "year": 2023, "type": "peli", "status": "vist"}, {"id": 54, "title": "Altered Carbon", "year": 2018, "type": "serie", "status": "vist"}, {"id": 55, "title": "American Gods", "year": 2017, "type": "serie", "status": "vist"}, {"id": 56, "title": "Andor", "year": 2022, "type": "serie", "status": "vist"}, {"id": 57, "title": "Así nos ven", "year": 2019, "type": "serie", "status": "vist"}, {"id": 58, "title": "Away", "year": 2020, "type": "serie", "status": "vist"}, {"id": 59, "title": "Berlin Station", "year": 2016, "type": "serie", "status": "vist"}, {"id": 60, "title": "Better Call Saul", "year": 2015, "type": "serie", "status": "vist"}, {"id": 61, "title": "Billions", "year": 2016, "type": "serie", "status": "vist"}, {"id": 62, "title": "Black Mirror", "year": 2011, "type": "serie", "status": "vist"}, {"id": 63, "title": "Blade Runner 2049", "year": 2017, "type": "peli", "status": "vist"}, {"id": 64, "title": "Blue Lights", "year": 2023, "type": "serie", "status": "vist"}, {"id": 65, "title": "Boardwalk Empire", "year": 2010, "type": "serie", "status": "vist"}, {"id": 66, "title": "Bodyguard", "year": 2018, "type": "serie", "status": "vist"}, {"id": 67, "title": "Bosch", "year": 2014, "type": "serie", "status": "vist"}, {"id": 68, "title": "Breaking Bad", "year": 2008, "type": "serie", "status": "vist"}, {"id": 69, "title": "Breathtaking", "year": 2024, "type": "serie", "status": "vist"}, {"id": 70, "title": "Broadchurch", "year": 2013, "type": "serie", "status": "vist"}, {"id": 71, "title": "Bruja Escarlata y Visión", "year": 2021, "type": "serie", "status": "vist"}, {"id": 72, "title": "Burning Bush", "year": 2013, "type": "serie", "status": "vist"}, {"id": 73, "title": "Caballero Luna", "year": 2022, "type": "serie", "status": "vist"}, {"id": 74, "title": "Chernobyl", "year": 2019, "type": "serie", "status": "vist"}, {"id": 75, "title": "Citadel (T2)", "year": 2026, "type": "serie", "status": "vist"}, {"id": 76, "title": "Citadel: Diana", "year": 2024, "type": "serie", "status": "vist"}, {"id": 77, "title": "City on a Hill", "year": 2019, "type": "serie", "status": "vist"}, {"id": 78, "title": "Cómo meterse en un jardín", "year": 2021, "type": "serie", "status": "vist"}, {"id": 79, "title": "Cónclave", "year": 2024, "type": "peli", "status": "vist"}, {"id": 80, "title": "Condena", "year": 2021, "type": "serie", "status": "vist"}, {"id": 81, "title": "Cóndor", "year": 2018, "type": "serie", "status": "vist"}, {"id": 82, "title": "Conexiones", "year": 2023, "type": "serie", "status": "vist"}, {"id": 83, "title": "Constelación (Constellation)", "year": 2024, "type": "serie", "status": "vist"}, {"id": 84, "title": "Counterpart", "year": 2017, "type": "serie", "status": "vist"}, {"id": 85, "title": "Crime", "year": 2021, "type": "serie", "status": "vist"}, {"id": 86, "title": "Daryl Dixon (The Walking Dead)", "year": 2023, "type": "serie", "status": "vist"}, {"id": 87, "title": "Defender a Jacob", "year": 2020, "type": "serie", "status": "vist"}, {"id": 88, "title": "Den of Thieves (Juego de ladrones)", "year": 2018, "type": "peli", "status": "vist"}, {"id": 89, "title": "Dept. Q", "year": 2025, "type": "serie", "status": "vist"}, {"id": 90, "title": "Des", "year": 2020, "type": "serie", "status": "vist"}, {"id": 91, "title": "Detectorists", "year": 2014, "type": "serie", "status": "vist"}, {"id": 92, "title": "Devs", "year": 2020, "type": "serie", "status": "vist"}, {"id": 93, "title": "Dexter", "year": 2006, "type": "serie", "status": "vist"}, {"id": 94, "title": "Dexter: New Blood", "year": 2021, "type": "serie", "status": "vist"}, {"id": 95, "title": "Disclaimer (Observada)", "year": 2024, "type": "serie", "status": "vist"}, {"id": 96, "title": "DMZ", "year": 2022, "type": "serie", "status": "vist"}, {"id": 97, "title": "Doom Patrol", "year": 2019, "type": "serie", "status": "vist"}, {"id": 98, "title": "Dope Thief (Ladrones de drogas)", "year": 2025, "type": "serie", "status": "vist"}, {"id": 99, "title": "Dopesick: Historia de una adicción", "year": 2021, "type": "serie", "status": "vist"}, {"id": 100, "title": "Douglas is Cancelled", "year": 2024, "type": "serie", "status": "vist"}, {"id": 101, "title": "Down Cemetery Road", "year": 2025, "type": "serie", "status": "vist"}, {"id": 102, "title": "Dune", "year": 2021, "type": "peli", "status": "vist"}, {"id": 103, "title": "Dune: La profecía", "year": 2024, "type": "serie", "status": "vist"}, {"id": 104, "title": "Dune: Parte Dos", "year": 2024, "type": "peli", "status": "vist"}, {"id": 105, "title": "East Side", "year": 2023, "type": "serie", "status": "vist"}, {"id": 106, "title": "El ala oeste de la Casa Blanca", "year": 1999, "type": "serie", "status": "vist"}, {"id": 107, "title": "El asesino", "year": 2023, "type": "peli", "status": "vist"}, {"id": 108, "title": "El camino estrecho", "year": 2024, "type": "serie", "status": "vist"}, {"id": 109, "title": "El caso Hartung", "year": 2021, "type": "serie", "status": "vist"}, {"id": 110, "title": "El Chacal (The Day of the Jackal)", "year": 2024, "type": "serie", "status": "vist"}, {"id": 111, "title": "El código que valía millones", "year": 2021, "type": "serie", "status": "vist"}, {"id": 112, "title": "El Contable 2", "year": 2025, "type": "peli", "status": "vist"}, {"id": 113, "title": "El Cuento de la Criada", "year": 2017, "type": "serie", "status": "vist"}, {"id": 114, "title": "El espía", "year": 2019, "type": "serie", "status": "vist"}, {"id": 115, "title": "El estudio", "year": 2025, "type": "serie", "status": "vist"}, {"id": 116, "title": "El Eternauta", "year": 2025, "type": "serie", "status": "vist"}, {"id": 117, "title": "El hombre contra la abeja", "year": 2022, "type": "serie", "status": "vist"}, {"id": 118, "title": "El hombre en el castillo", "year": 2015, "type": "serie", "status": "vist"}, {"id": 119, "title": "El incendio", "year": 2020, "type": "serie", "status": "vist"}, {"id": 120, "title": "El infiltrado", "year": 2016, "type": "serie", "status": "vist"}, {"id": 121, "title": "El Irlandés", "year": 2019, "type": "peli", "status": "vist"}, {"id": 122, "title": "El laberinto de la paz", "year": 2020, "type": "serie", "status": "vist"}, {"id": 123, "title": "El libro de Boba Fett", "year": 2021, "type": "serie", "status": "vist"}, {"id": 124, "title": "El mundo en llamas", "year": 2019, "type": "serie", "status": "vist"}, {"id": 125, "title": "El Oso (The Bear)", "year": 2022, "type": "serie", "status": "vist"}, {"id": 126, "title": "El Pacto", "year": 2023, "type": "serie", "status": "vist"}, {"id": 127, "title": "El padrino de Harlem", "year": 2019, "type": "serie", "status": "vist"}, {"id": 128, "title": "El Pingüino", "year": 2024, "type": "serie", "status": "vist"}, {"id": 129, "title": "El premio de tu vida", "year": 2023, "type": "serie", "status": "vist"}, {"id": 130, "title": "El problema de los 3 cuerpos", "year": 2024, "type": "serie", "status": "vist"}, {"id": 131, "title": "El Quinto Mandamiento", "year": 2023, "type": "serie", "status": "vist"}, {"id": 132, "title": "El Rastro", "year": 2023, "type": "serie", "status": "vist"}, {"id": 133, "title": "El Señor de los Anillos: Los Anillos de Poder", "year": 2022, "type": "serie", "status": "vist"}, {"id": 134, "title": "El Simpatizante", "year": 2024, "type": "serie", "status": "vist"}, {"id": 135, "title": "El visitante", "year": 2020, "type": "serie", "status": "vist"}, {"id": 136, "title": "Encerrado con el diablo", "year": 2022, "type": "serie", "status": "vist"}, {"id": 137, "title": "Érase una vez en el Oeste", "year": 2024, "type": "peli", "status": "vist"}, {"id": 138, "title": "Estación Once", "year": 2021, "type": "serie", "status": "vist"}, {"id": 139, "title": "Esto te va a doler", "year": 2022, "type": "serie", "status": "vist"}, {"id": 140, "title": "F1: La emoción de un Grand Prix", "year": 2019, "type": "serie", "status": "vist"}, {"id": 141, "title": "Falcon y el Soldado de Invierno", "year": 2021, "type": "serie", "status": "vist"}, {"id": 142, "title": "Fantasmas de Beirut", "year": 2023, "type": "serie", "status": "vist"}, {"id": 143, "title": "Fargo", "year": 2014, "type": "serie", "status": "vist"}, {"id": 144, "title": "Fear the Walking Dead", "year": 2015, "type": "serie", "status": "vist"}, {"id": 145, "title": "Ferrari", "year": 2023, "type": "peli", "status": "vist"}, {"id": 146, "title": "Fringe", "year": 2008, "type": "serie", "status": "vist"}, {"id": 147, "title": "Fuga en Dannemora", "year": 2018, "type": "serie", "status": "vist"}, {"id": 148, "title": "Fundación", "year": 2021, "type": "serie", "status": "vist"}, {"id": 149, "title": "Furiosa", "year": 2024, "type": "peli", "status": "vist"}, {"id": 150, "title": "Gambito de Dama", "year": 2020, "type": "serie", "status": "vist"}, {"id": 151, "title": "Gangs of London", "year": 2020, "type": "serie", "status": "vist"}, {"id": 152, "title": "Giri/Haji", "year": 2019, "type": "serie", "status": "vist"}, {"id": 153, "title": "Gladiator II", "year": 2024, "type": "peli", "status": "vist"}, {"id": 154, "title": "Gomorra", "year": 2014, "type": "serie", "status": "vist"}, {"id": 155, "title": "Good Omens", "year": 2019, "type": "serie", "status": "vist"}, {"id": 156, "title": "Good Omens 2", "year": 2023, "type": "serie", "status": "vist"}, {"id": 157, "title": "Gran Turismo", "year": 2023, "type": "peli", "status": "vist"}, {"id": 158, "title": "Guardianes de la Galaxia Vol. 3", "year": 2023, "type": "peli", "status": "vist"}, {"id": 159, "title": "Halston", "year": 2021, "type": "serie", "status": "vist"}, {"id": 160, "title": "Halt and Catch Fire", "year": 2014, "type": "serie", "status": "vist"}, {"id": 161, "title": "Happy Valley", "year": 2014, "type": "serie", "status": "vist"}, {"id": 162, "title": "Hermanos de sangre", "year": 2001, "type": "serie", "status": "vist"}, {"id": 163, "title": "Hidden Assets", "year": 2021, "type": "serie", "status": "vist"}, {"id": 164, "title": "High Maintenance", "year": 2016, "type": "serie", "status": "vist"}, {"id": 165, "title": "Hijos de la anarquía", "year": 2008, "type": "serie", "status": "vist"}, {"id": 166, "title": "Historial Delictivo (Criminal Record)", "year": 2024, "type": "serie", "status": "vist"}, {"id": 167, "title": "Historias del Bucle", "year": 2020, "type": "serie", "status": "vist"}, {"id": 168, "title": "Homecoming", "year": 2018, "type": "serie", "status": "vist"}, {"id": 169, "title": "Homeland", "year": 2011, "type": "serie", "status": "vist"}, {"id": 170, "title": "Hotel Cocaína", "year": 2024, "type": "serie", "status": "vist"}, {"id": 171, "title": "House", "year": 2004, "type": "serie", "status": "vist"}, {"id": 172, "title": "House of Cards", "year": 2013, "type": "serie", "status": "vist"}, {"id": 173, "title": "Hunters", "year": 2020, "type": "serie", "status": "vist"}, {"id": 174, "title": "Indiana Jones y el Dial del Destino", "year": 2023, "type": "peli", "status": "vist"}, {"id": 175, "title": "Informer", "year": 2018, "type": "serie", "status": "vist"}, {"id": 176, "title": "Invasión", "year": 2021, "type": "serie", "status": "vist"}, {"id": 177, "title": "Invasión Secreta", "year": 2023, "type": "serie", "status": "vist"}, {"id": 178, "title": "It's a Sin", "year": 2021, "type": "serie", "status": "vist"}, {"id": 179, "title": "Juego de Tronos", "year": 2011, "type": "serie", "status": "vist"}, {"id": 180, "title": "Jurado Nº 2", "year": 2024, "type": "peli", "status": "vist"}, {"id": 181, "title": "Killing Eve", "year": 2018, "type": "serie", "status": "vist"}, {"id": 182, "title": "La Agencia", "year": 2024, "type": "serie", "status": "vist"}, {"id": 183, "title": "La Bestia en Mi", "year": 2025, "type": "serie", "status": "vist"}, {"id": 184, "title": "La caza", "year": 2013, "type": "serie", "status": "vist"}, {"id": 185, "title": "La chica del tambor", "year": 2018, "type": "serie", "status": "vist"}, {"id": 186, "title": "La ciudad es nuestra", "year": 2022, "type": "serie", "status": "vist"}, {"id": 187, "title": "La conjura contra América", "year": 2020, "type": "serie", "status": "vist"}, {"id": 188, "title": "La costa de los mosquitos", "year": 2021, "type": "serie", "status": "vist"}, {"id": 189, "title": "La delgada línea azul (Thin Blue Line)", "year": 2021, "type": "peli", "status": "vist"}, {"id": 190, "title": "La guerra de los mundos (BBC)", "year": 2019, "type": "serie", "status": "vist"}, {"id": 191, "title": "La guerra de los mundos (Canal+)", "year": 2019, "type": "serie", "status": "vist"}, {"id": 192, "title": "La mafia solo mata en verano", "year": 2016, "type": "peli", "status": "vist"}, {"id": 193, "title": "La mafia solo mata en verano (La serie)", "year": 2016, "type": "serie", "status": "vist"}, {"id": 194, "title": "La serpiente de Essex", "year": 2022, "type": "serie", "status": "vist"}, {"id": 195, "title": "La voz más alta", "year": 2019, "type": "serie", "status": "vist"}, {"id": 196, "title": "Lamborghini", "year": 2022, "type": "peli", "status": "vist"}, {"id": 197, "title": "Landman", "year": 2024, "type": "serie", "status": "vist"}, {"id": 198, "title": "Las buenas madres", "year": 2023, "type": "serie", "status": "vist"}, {"id": 199, "title": "Liaison", "year": 2023, "type": "serie", "status": "vist"}, {"id": 200, "title": "Line of Duty", "year": 2012, "type": "serie", "status": "vist"}, {"id": 201, "title": "Litvinenko", "year": 2022, "type": "serie", "status": "vist"}, {"id": 202, "title": "Loki", "year": 2021, "type": "serie", "status": "vist"}, {"id": 203, "title": "London Kills", "year": 2019, "type": "serie", "status": "vist"}, {"id": 204, "title": "Los amos del aire", "year": 2024, "type": "serie", "status": "vist"}, {"id": 205, "title": "Los efectos de Gomorra sobre la gente", "year": 2014, "type": "serie", "status": "vist"}, {"id": 206, "title": "Los informáticos", "year": 2006, "type": "serie", "status": "vist"}, {"id": 207, "title": "Los Soprano", "year": 1999, "type": "serie", "status": "vist"}, {"id": 208, "title": "Lost", "year": null, "type": "serie", "status": "vist"}, {"id": 209, "title": "Love, Death & Robots", "year": 2019, "type": "serie", "status": "vist"}, {"id": 210, "title": "Lupin", "year": 2021, "type": "serie", "status": "vist"}, {"id": 211, "title": "Luther", "year": 2010, "type": "serie", "status": "vist"}, {"id": 212, "title": "Luther: Cae la noche", "year": 2023, "type": "peli", "status": "vist"}, {"id": 213, "title": "Manhunt: Unabomber", "year": 2017, "type": "serie", "status": "vist"}, {"id": 214, "title": "Maniac", "year": 2018, "type": "serie", "status": "vist"}, {"id": 215, "title": "Mare of Easttown", "year": 2021, "type": "serie", "status": "vist"}, {"id": 216, "title": "Mars", "year": 2016, "type": "serie", "status": "vist"}, {"id": 217, "title": "Matabot", "year": 2024, "type": "serie", "status": "vist"}, {"id": 218, "title": "Materia Oscura (Dark Matter)", "year": 2024, "type": "serie", "status": "vist"}, {"id": 219, "title": "Mayans M.C.", "year": 2018, "type": "serie", "status": "vist"}, {"id": 220, "title": "Medicina Letal", "year": 2023, "type": "serie", "status": "vist"}, {"id": 221, "title": "Mindhunter", "year": 2017, "type": "serie", "status": "vist"}, {"id": 222, "title": "Misión Imposible: Sentencia Mortal", "year": 2023, "type": "peli", "status": "vist"}, {"id": 223, "title": "Missions", "year": 2017, "type": "serie", "status": "vist"}, {"id": 224, "title": "Mayor of Kigstown", "year": 2025, "type": "serie", "status": "vist"}, {"id": 225, "title": "Modern Family", "year": 2009, "type": "serie", "status": "vist"}, {"id": 226, "title": "Monsieur Spade", "year": 2024, "type": "serie", "status": "vist"}, {"id": 227, "title": "Mr Bates contra Correos", "year": 2024, "type": "serie", "status": "vist"}, {"id": 228, "title": "Mr. Robot", "year": 2015, "type": "serie", "status": "vist"}, {"id": 229, "title": "Mrs. Wilson", "year": 2018, "type": "serie", "status": "vist"}, {"id": 230, "title": "Mythic Quest", "year": 2020, "type": "serie", "status": "vist"}, {"id": 231, "title": "Mythic Quest", "year": 2020, "type": "serie", "status": "vist"}, {"id": 232, "title": "Napoleón", "year": 2023, "type": "peli", "status": "vist"}, {"id": 233, "title": "Narcos", "year": 2015, "type": "serie", "status": "vist"}, {"id": 234, "title": "Narcos: México", "year": 2018, "type": "serie", "status": "vist"}, {"id": 235, "title": "Obi-Wan Kenobi", "year": 2022, "type": "serie", "status": "vist"}, {"id": 236, "title": "Occupied", "year": 2015, "type": "serie", "status": "vist"}, {"id": 237, "title": "Operaciones Especiales: Lioness", "year": 2023, "type": "serie", "status": "vist"}, {"id": 238, "title": "Oppenheimer", "year": 2023, "type": "peli", "status": "vist"}, {"id": 239, "title": "Our Boys", "year": 2019, "type": "serie", "status": "vist"}, {"id": 240, "title": "Outer Range", "year": 2022, "type": "serie", "status": "vist"}, {"id": 241, "title": "Ozark", "year": 2017, "type": "serie", "status": "vist"}, {"id": 242, "title": "Peaky Blinders", "year": 2013, "type": "serie", "status": "vist"}, {"id": 243, "title": "Press", "year": 2018, "type": "serie", "status": "vist"}, {"id": 244, "title": "Presunto Inocente", "year": 2024, "type": "serie", "status": "vist"}, {"id": 245, "title": "Prime Target (Objetivo clave)", "year": 2024, "type": "serie", "status": "vist"}, {"id": 246, "title": "Prison Break", "year": 2005, "type": "serie", "status": "vist"}, {"id": 247, "title": "Proyecto Blue Book", "year": 2019, "type": "serie", "status": "vist"}, {"id": 248, "title": "Quisling", "year": 2024, "type": "serie", "status": "vist"}, {"id": 249, "title": "Raised by Wolves", "year": 2020, "type": "serie", "status": "vist"}, {"id": 250, "title": "Ray Donovan", "year": 2013, "type": "serie", "status": "vist"}, {"id": 251, "title": "Reacher", "year": 2022, "type": "serie", "status": "vist"}, {"id": 252, "title": "Revancha", "year": 2024, "type": "serie", "status": "vist"}, {"id": 253, "title": "Rivales", "year": 2024, "type": "peli", "status": "vist"}, {"id": 254, "title": "Roadkill", "year": 2020, "type": "serie", "status": "vist"}, {"id": 255, "title": "Roma criminal", "year": 2008, "type": "serie", "status": "vist"}, {"id": 256, "title": "Sandman", "year": 2022, "type": "serie", "status": "vist"}, {"id": 257, "title": "Secuestro en el aire", "year": 2023, "type": "serie", "status": "vist"}, {"id": 258, "title": "See", "year": 2019, "type": "serie", "status": "vist"}, {"id": 259, "title": "Senna", "year": 2024, "type": "serie", "status": "vist"}, {"id": 260, "title": "Separación", "year": 2022, "type": "serie", "status": "vist"}, {"id": 261, "title": "Separación", "year": 2022, "type": "serie", "status": "vist"}, {"id": 262, "title": "Servant", "year": 2019, "type": "serie", "status": "vist"}, {"id": 263, "title": "Sherlock", "year": 2010, "type": "serie", "status": "vist"}, {"id": 264, "title": "Sherwood", "year": 2022, "type": "serie", "status": "vist"}, {"id": 265, "title": "Show Me a Hero", "year": 2015, "type": "serie", "status": "vist"}, {"id": 266, "title": "Silicon Valley", "year": 2014, "type": "serie", "status": "vist"}, {"id": 267, "title": "Silo", "year": 2023, "type": "serie", "status": "vist"}, {"id": 268, "title": "Slow Horses", "year": 2022, "type": "serie", "status": "vist"}, {"id": 269, "title": "Smoke", "year": 2023, "type": "serie", "status": "vist"}, {"id": 270, "title": "Sospechoso (El asesinato de Jean Charles de Menezes)", "year": 2024, "type": "serie", "status": "vist"}, {"id": 271, "title": "Space Force", "year": 2020, "type": "serie", "status": "vist"}, {"id": 272, "title": "Sr. y Sra. Smith", "year": 2024, "type": "serie", "status": "vist"}, {"id": 273, "title": "SS-GB", "year": 2017, "type": "serie", "status": "vist"}, {"id": 274, "title": "Star Trek: Discovery", "year": 2017, "type": "serie", "status": "vist"}, {"id": 275, "title": "Star Trek: Picard", "year": 2020, "type": "serie", "status": "vist"}, {"id": 276, "title": "StartUp", "year": 2016, "type": "serie", "status": "vist"}, {"id": 277, "title": "State of the Union", "year": 2019, "type": "serie", "status": "vist"}, {"id": 278, "title": "Steeltown Murders", "year": 2023, "type": "serie", "status": "vist"}, {"id": 279, "title": "Suburra: La serie", "year": 2017, "type": "serie", "status": "vist"}, {"id": 280, "title": "Succession", "year": 2018, "type": "serie", "status": "vist"}, {"id": 281, "title": "Sucesor designado", "year": 2016, "type": "serie", "status": "vist"}, {"id": 282, "title": "Super Pumped: La batalla por Uber", "year": 2022, "type": "serie", "status": "vist"}, {"id": 283, "title": "Superman", "year": 2025, "type": "peli", "status": "vist"}, {"id": 284, "title": "Superman & Lois", "year": 2021, "type": "serie", "status": "vist"}, {"id": 285, "title": "Ted Lasso", "year": 2020, "type": "serie", "status": "vist"}, {"id": 286, "title": "The Acolyte", "year": 2024, "type": "serie", "status": "vist"}, {"id": 287, "title": "The Americans", "year": 2013, "type": "serie", "status": "vist"}, {"id": 288, "title": "The Bear", "year": 2022, "type": "serie", "status": "vist"}, {"id": 289, "title": "The Blacklist", "year": 2013, "type": "serie", "status": "vist"}, {"id": 290, "title": "The Capture", "year": 2019, "type": "serie", "status": "vist"}, {"id": 291, "title": "The Corner", "year": 2000, "type": "serie", "status": "vist"}, {"id": 292, "title": "The Creator", "year": 2023, "type": "peli", "status": "vist"}, {"id": 293, "title": "The Enemy Within", "year": 2019, "type": "serie", "status": "vist"}, {"id": 294, "title": "The Equalizer 3", "year": 2023, "type": "peli", "status": "vist"}, {"id": 295, "title": "The Expanse", "year": 2015, "type": "serie", "status": "vist"}, {"id": 296, "title": "The Fear Index", "year": 2022, "type": "serie", "status": "vist"}, {"id": 297, "title": "The Flash", "year": 2023, "type": "peli", "status": "vist"}, {"id": 298, "title": "The Good Fight", "year": 2017, "type": "serie", "status": "vist"}, {"id": 299, "title": "The Grand Tour", "year": 2016, "type": "serie", "status": "vist"}, {"id": 300, "title": "The Last of Us", "year": 2023, "type": "serie", "status": "vist"}, {"id": 301, "title": "The Last Ship", "year": 2014, "type": "serie", "status": "vist"}, {"id": 302, "title": "The Leftovers", "year": 2014, "type": "serie", "status": "vist"}, {"id": 303, "title": "The Long Shadow", "year": 2023, "type": "serie", "status": "vist"}, {"id": 304, "title": "The Looming Tower", "year": 2018, "type": "serie", "status": "vist"}, {"id": 305, "title": "The Mandalorian", "year": 2019, "type": "serie", "status": "vist"}, {"id": 306, "title": "The Morning Show", "year": 2019, "type": "serie", "status": "vist"}, {"id": 307, "title": "The New Pope", "year": 2020, "type": "serie", "status": "vist"}, {"id": 308, "title": "The Newsroom", "year": 2012, "type": "serie", "status": "vist"}, {"id": 309, "title": "The Night Of", "year": 2016, "type": "serie", "status": "vist"}, {"id": 310, "title": "The Office", "year": 2005, "type": "serie", "status": "vist"}, {"id": 311, "title": "The Old Man", "year": 2022, "type": "serie", "status": "vist"}, {"id": 312, "title": "The Outlaws", "year": 2023, "type": "serie", "status": "vist"}, {"id": 313, "title": "The Pacific", "year": 2010, "type": "serie", "status": "vist"}, {"id": 314, "title": "The Pirate Bay", "year": 2024, "type": "serie", "status": "vist"}, {"id": 315, "title": "The Responder", "year": 2022, "type": "serie", "status": "vist"}, {"id": 316, "title": "The Sandman", "year": 2022, "type": "serie", "status": "vist"}, {"id": 317, "title": "The Sinner", "year": 2017, "type": "serie", "status": "vist"}, {"id": 318, "title": "The Sopranos", "year": null, "type": "serie", "status": "vist"}, {"id": 319, "title": "The Terror", "year": 2018, "type": "serie", "status": "vist"}, {"id": 320, "title": "The Twilight Zone", "year": 2019, "type": "serie", "status": "vist"}, {"id": 321, "title": "The Veil: Red de mentiras", "year": 2024, "type": "serie", "status": "vist"}, {"id": 322, "title": "The Walking Dead", "year": 2010, "type": "serie", "status": "vist"}, {"id": 323, "title": "The Walking Dead: Dead City", "year": 2023, "type": "serie", "status": "vist"}, {"id": 324, "title": "The Wire", "year": null, "type": "serie", "status": "vist"}, {"id": 325, "title": "The Wire (Bajo escucha)", "year": 2002, "type": "serie", "status": "vist"}, {"id": 326, "title": "The Young Pope", "year": 2016, "type": "serie", "status": "vist"}, {"id": 327, "title": "This City is Ours", "year": 2025, "type": "serie", "status": "vist"}, {"id": 328, "title": "This Town", "year": 2024, "type": "serie", "status": "vist"}, {"id": 329, "title": "Tierra de mafiosos", "year": 2025, "type": "serie", "status": "vist"}, {"id": 330, "title": "Tokyo Vice", "year": 2022, "type": "serie", "status": "vist"}, {"id": 331, "title": "Tom Clancy’s Jack Ryan", "year": 2018, "type": "serie", "status": "vist"}, {"id": 332, "title": "Traces", "year": 2019, "type": "serie", "status": "vist"}, {"id": 333, "title": "Trampa-22", "year": 2019, "type": "serie", "status": "vist"}, {"id": 334, "title": "Treme", "year": 2010, "type": "serie", "status": "vist"}, {"id": 335, "title": "True Detective", "year": 2024, "type": "serie", "status": "vist"}, {"id": 336, "title": "Truth Be Told", "year": 2019, "type": "serie", "status": "vist"}, {"id": 337, "title": "Trying", "year": 2020, "type": "serie", "status": "vist"}, {"id": 338, "title": "Una confesión", "year": 2019, "type": "serie", "status": "vist"}, {"id": 339, "title": "Upload", "year": 2020, "type": "serie", "status": "vist"}, {"id": 340, "title": "Utopia", "year": 2013, "type": "serie", "status": "vist"}, {"id": 341, "title": "Valley of Tears", "year": 2020, "type": "serie", "status": "vist"}, {"id": 342, "title": "Venom: El último baile", "year": 2024, "type": "peli", "status": "vist"}, {"id": 343, "title": "Vigil", "year": 2021, "type": "serie", "status": "vist"}, {"id": 344, "title": "Vigil: Conspiración nuclear", "year": 2021, "type": "serie", "status": "vist"}, {"id": 345, "title": "Waco", "year": 2018, "type": "serie", "status": "vist"}, {"id": 346, "title": "Walk-In (The Walk-In)", "year": 2022, "type": "serie", "status": "vist"}, {"id": 347, "title": "Watchmen", "year": 2019, "type": "serie", "status": "vist"}, {"id": 348, "title": "We Crashed", "year": 2022, "type": "serie", "status": "vist"}, {"id": 349, "title": "Westworld", "year": 2016, "type": "serie", "status": "vist"}, {"id": 350, "title": "Years and Years", "year": 2019, "type": "serie", "status": "vist"}, {"id": 351, "title": "Yellowstone", "year": 2018, "type": "serie", "status": "vist"}, {"id": 352, "title": "Your Honor", "year": 2020, "type": "serie", "status": "vist"}, {"id": 353, "title": "Zero Day", "year": 2025, "type": "serie", "status": "vist"}, {"id": 354, "title": "ZeroZeroZero", "year": 2020, "type": "serie", "status": "vist"}, {"id": 355, "title": "Pluribus", "year": 2025, "type": "serie", "status": "vist"}];
+const SEED_BOOKS = [{"id": 1, "title": "El Futuro es Nuestro", "author": "Larry Collins", "year": 2026, "status": "llegit"}, {"id": 2, "title": "Aguilas Negras", "author": "Larry Collins", "year": 2025, "status": "llegit"}, {"id": 3, "title": "¿Arde París? (Spanish Edition)", "author": "Dominique Lapierre/ Larry Collins", "year": 2022, "status": "llegit"}, {"id": 4, "title": "El marciano", "author": "Andy Weir", "year": 2014, "status": "llegit"}, {"id": 5, "title": "Proyecto Hail Mary", "author": "Andy Weir", "year": 2021, "status": "llegit"}, {"id": 6, "title": "Claro de Tierra", "author": "Arthur C. Clarke", "year": 2009, "status": "llegit"}, {"id": 7, "title": "Las arenas de Marte", "author": "Arthur C. Clarke", "year": 1991, "status": "llegit"}, {"id": 8, "title": "La ciudad y las estrellas", "author": "Arthur C. Clarke", "year": 2001, "status": "llegit"}, {"id": 9, "title": "El último teorema", "author": "Arthur C. Clarke", "year": 2008, "status": "llegit"}, {"id": 10, "title": "El centinela", "author": "Arthur C. Clarke", "year": 2004, "status": "llegit"}, {"id": 11, "title": "Las canciones de la lejana Tierra", "author": "Arthur C. Clarke", "year": 2001, "status": "llegit"}, {"id": 12, "title": "3001: Odisea final", "author": "Arthur C. Clarke", "year": 1999, "status": "llegit"}, {"id": 13, "title": "Rama II (Rama #2)", "author": "Arthur C. Clarke", "year": 1996, "status": "llegit"}, {"id": 14, "title": "2061: Odisea tres", "author": "Arthur C. Clarke", "year": 1997, "status": "llegit"}, {"id": 15, "title": "Las fuentes del paraíso", "author": "Arthur C. Clarke", "year": 2001, "status": "llegit"}, {"id": 16, "title": "2010: Odisea dos", "author": "Arthur C. Clarke", "year": 1997, "status": "llegit"}, {"id": 17, "title": "El fin de la infancia", "author": "Arthur C. Clarke", "year": 1987, "status": "llegit"}, {"id": 18, "title": "2001: Una odisea del espacio", "author": "Arthur C. Clarke", "year": 2000, "status": "llegit"}, {"id": 19, "title": "Cita con Rama", "author": "Arthur C. Clarke", "year": 2000, "status": "llegit"}, {"id": 20, "title": "El presidente ha desaparecido", "author": "Bill Clinton", "year": 2018, "status": "llegit"}, {"id": 21, "title": "Un punto azul pálido", "author": "Carl Sagan", "year": 2009, "status": "llegit"}, {"id": 22, "title": "La sombra del viento (El cementerio de los libros olvidados, #1)", "author": "Carlos Ruiz Zafón", "year": 2011, "status": "llegit"}, {"id": 23, "title": "Guía de un astronauta para vivir en la Tierra", "author": "Chris Hadfield", "year": 2014, "status": "llegit"}, {"id": 24, "title": "Origen (Robert Langdon, #5)", "author": "Dan Brown", "year": 2017, "status": "llegit"}, {"id": 25, "title": "El Código Da Vonci", "author": "Dan Brown", "year": null, "status": "llegit"}, {"id": 26, "title": "El Simbolo Perdido", "author": "Dan Brown", "year": null, "status": "llegit"}, {"id": 27, "title": "Inferno", "author": "Dan Brown", "year": null, "status": "llegit"}, {"id": 28, "title": "Ángeles y demonios", "author": "Dan Brown", "year": 2006, "status": "llegit"}, {"id": 29, "title": "El ascenso de Endymion", "author": "Dan Simmons", "year": 2010, "status": "llegit"}, {"id": 30, "title": "Huérfanos del Hélice", "author": "Dan Simmons", "year": 2016, "status": "llegit"}, {"id": 31, "title": "Endymion (Hyperion Cantos, #3)", "author": "Dan Simmons", "year": 1996, "status": "llegit"}, {"id": 32, "title": "La caída de Hyperion", "author": "Dan Simmons", "year": 1995, "status": "llegit"}, {"id": 33, "title": "Hyperion (Hyperion Cantos, #1)", "author": "Dan Simmons", "year": 1990, "status": "llegit"}, {"id": 34, "title": "Iron Man: Ejecutar Programa", "author": "Daniel Knauf", "year": 2007, "status": "llegit"}, {"id": 35, "title": "El círculo", "author": "Dave Eggers", "year": 2014, "status": "llegit"}, {"id": 36, "title": "Lo que no te mata te hace más fuerte (Millennium, #4)", "author": "David Lagercrantz", "year": 2015, "status": "llegit"}, {"id": 37, "title": "Planeta Extra", "author": "Diego Agrimbau", "year": 2009, "status": "llegit"}, {"id": 38, "title": "Guía del autoestopista galáctico", "author": "Douglas Adams", "year": 2005, "status": "llegit"}, {"id": 39, "title": "Hard Boiled", "author": "Frank Miller", "year": 2004, "status": "llegit"}, {"id": 40, "title": "El infiltrado", "author": "Frederick Forsyth", "year": 2015, "status": "llegit"}, {"id": 41, "title": "El zorro", "author": "Frederick Forsyth", "year": 2019, "status": "llegit"}, {"id": 42, "title": "El manifiesto negro", "author": "Frederick Forsyth", "year": 2003, "status": "llegit"}, {"id": 43, "title": "La alternativa del diablo", "author": "Frederick Forsyth", "year": 1983, "status": "llegit"}, {"id": 44, "title": "El puño de Dios", "author": "Frederick Forsyth", "year": 1994, "status": "llegit"}, {"id": 45, "title": "El Manipulador", "author": "Frederick Forsyth", "year": 2003, "status": "llegit"}, {"id": 46, "title": "El afgano", "author": "Frederick Forsyth", "year": 2007, "status": "llegit"}, {"id": 47, "title": "La lista", "author": "Frederick Forsyth", "year": 2014, "status": "llegit"}, {"id": 48, "title": "Homo plus", "author": "Frederik Pohl", "year": 1977, "status": "llegit"}, {"id": 49, "title": "Pórtico (La saga de los Heechee, #1)", "author": "Frederik Pohl", "year": 2007, "status": "llegit"}, {"id": 50, "title": "La guerra de los mercaderes", "author": "Frederik Pohl", "year": 1991, "status": "llegit"}, {"id": 51, "title": "Mercaderes del espacio", "author": "Frederik Pohl", "year": 1995, "status": "llegit"}, {"id": 52, "title": "1984", "author": "George Orwell", "year": 1950, "status": "llegit"}, {"id": 53, "title": "Juego de tronos (Canción de Hielo y Fuego, #1)", "author": "George R.R. Martin", "year": 2018, "status": "llegit"}, {"id": 54, "title": "Festí de corbs (Cançó de gel i foc, #4)", "author": "George R.R. Martin", "year": 2012, "status": "llegit"}, {"id": 55, "title": "Tempesta d'Espases (Cançó de Gel i Foc, #3)", "author": "George R.R. Martin", "year": 2012, "status": "llegit"}, {"id": 56, "title": "Choque de reyes (Canción de hielo y fuego, #2)", "author": "George R.R. Martin", "year": 2011, "status": "llegit"}, {"id": 57, "title": "En la cripta", "author": "H.P. Lovecraft", "year": 1980, "status": "llegit"}, {"id": 58, "title": "Edgar Allan Poe: Cuentos", "author": "Horacio Lalia", "year": 2011, "status": "llegit"}, {"id": 59, "title": "Anochecer", "author": "Isaac Asimov", "year": 2014, "status": "llegit"}, {"id": 60, "title": "Fundación y Tierra (Fundación, #5)", "author": "Isaac Asimov", "year": 2005, "status": "llegit"}, {"id": 61, "title": "Los límites de la Fundación (Fundación, #4)", "author": "Isaac Asimov", "year": 2005, "status": "llegit"}, {"id": 62, "title": "Cleon the Emperor", "author": "Isaac Asimov", "year": null, "status": "llegit"}, {"id": 63, "title": "El fin de la eternidad", "author": "Isaac Asimov", "year": 1986, "status": "llegit"}, {"id": 64, "title": "Los propios dioses", "author": "Isaac Asimov", "year": null, "status": "llegit"}, {"id": 65, "title": "Hacia la Fundación", "author": "Isaac Asimov", "year": 1995, "status": "llegit"}, {"id": 66, "title": "Preludio a la Fundación (Fundación, #1)", "author": "Isaac Asimov", "year": 2001, "status": "llegit"}, {"id": 67, "title": "Un guijarro en el cielo", "author": "Isaac Asimov", "year": 1992, "status": "llegit"}, {"id": 68, "title": "Bóvedas de acero (Robot, #1)", "author": "Isaac Asimov", "year": 2005, "status": "llegit"}, {"id": 69, "title": "En la arena estelar (Imperio Galáctico, #1)", "author": "Isaac Asimov", "year": 1991, "status": "llegit"}, {"id": 70, "title": "Las corrientes del espacio (Tríptico del Imperio, #2)", "author": "Isaac Asimov", "year": 1992, "status": "llegit"}, {"id": 71, "title": "Robots e Imperio", "author": "Isaac Asimov", "year": 1996, "status": "llegit"}, {"id": 72, "title": "Los robots del amanecer", "author": "Isaac Asimov", "year": 1994, "status": "llegit"}, {"id": 73, "title": "El sol desnudo (Robot, #2)", "author": "Isaac Asimov", "year": 2006, "status": "llegit"}, {"id": 74, "title": "Fundación e Imperio (Fundación, #2)", "author": "Isaac Asimov", "year": 2004, "status": "llegit"}, {"id": 75, "title": "Segunda Fundación (Fundación, #3)", "author": "Isaac Asimov", "year": 1999, "status": "llegit"}, {"id": 76, "title": "Fundación (Fundación; Orden de publicación, #1)", "author": "Isaac Asimov", "year": 2002, "status": "llegit"}, {"id": 77, "title": "Los puentes de Londres (Alex Cross, #10)", "author": "James  Patterson", "year": 2007, "status": "llegit"}, {"id": 78, "title": "La Tienda", "author": "James  Patterson", "year": 2018, "status": "llegit"}, {"id": 79, "title": "Mi vida en la Fórmula Uno", "author": "Jo Ramírez", "year": 2012, "status": "llegit"}, {"id": 80, "title": "Iron Man: El mandarín", "author": "Joe Casey", "year": 2008, "status": "llegit"}, {"id": 81, "title": "El jurado", "author": "John Grisham", "year": 2005, "status": "llegit"}, {"id": 82, "title": "Causa justa", "author": "John Grisham", "year": 2009, "status": "llegit"}, {"id": 83, "title": "El espía que surgió del frío (George Smiley, #3)", "author": "John le Carré", "year": 2003, "status": "llegit"}, {"id": 84, "title": "El sastre de Panamá", "author": "John le Carré", "year": 1997, "status": "llegit"}, {"id": 85, "title": "Single & Single", "author": "John le Carré", "year": 2006, "status": "llegit"}, {"id": 86, "title": "La caída de los gigantes", "author": "Ken Follett", "year": 2010, "status": "llegit"}, {"id": 87, "title": "Nunca", "author": "Ken Follett", "year": 2021, "status": "llegit"}, {"id": 88, "title": "El invierno del mundo", "author": "Ken Follett", "year": 2012, "status": "llegit"}, {"id": 89, "title": "Doble juego", "author": "Ken Follett", "year": 2000, "status": "llegit"}, {"id": 90, "title": "Alto riesgo", "author": "Ken Follett", "year": 2002, "status": "llegit"}, {"id": 91, "title": "Vuelo nocturno", "author": "Ken Follett", "year": 2003, "status": "llegit"}, {"id": 92, "title": "Maze", "author": "Larry Collins", "year": 1989, "status": "llegit"}, {"id": 93, "title": "El quinto jinete", "author": "Larry Collins", "year": 1987, "status": "llegit"}, {"id": 94, "title": "El fin de la muerte (Trilogía de los tres cuerpos, #3)", "author": "Liu Cixin", "year": 2018, "status": "llegit"}, {"id": 95, "title": "El bosque oscuro (Trilogía de los tres cuerpos, #2)", "author": "Liu Cixin", "year": 2017, "status": "llegit"}, {"id": 96, "title": "El problema de los tres cuerpos", "author": "Liu Cixin", "year": 2014, "status": "llegit"}, {"id": 97, "title": "Aion", "author": "Ludovic Rio", "year": 2019, "status": "llegit"}, {"id": 98, "title": "El último Don", "author": "Mario Puzo", "year": 1997, "status": "llegit"}, {"id": 99, "title": "Omertá", "author": "Mario Puzo", "year": 2001, "status": "llegit"}, {"id": 100, "title": "Rescate en el tiempo [1999-1357]", "author": "Michael Crichton", "year": 2004, "status": "llegit"}, {"id": 101, "title": "Deluvenn (Conquêtes, #2)", "author": "Nicolas Jarry", "year": 2019, "status": "llegit"}, {"id": 102, "title": "Conquest 03: Decornum (German Edition)", "author": "Nicolas Jarry", "year": 2020, "status": "llegit"}, {"id": 103, "title": "Lucky Starr, El Ranger del Espacio", "author": "Isaac Asimov", "year": 1998, "status": "llegit"}, {"id": 104, "title": "Cosecha de estrellas (Cosecha de estrellas, #1)", "author": "Poul Anderson", "year": 1993, "status": "llegit"}, {"id": 105, "title": "Munich", "author": "Robert   Harris", "year": 2017, "status": "llegit"}, {"id": 106, "title": "La luna es una cruel amante", "author": "Robert A. Heinlein", "year": 2009, "status": "llegit"}, {"id": 107, "title": "El día de pasado mañana", "author": "Robert A. Heinlein", "year": 1949, "status": "llegit"}, {"id": 108, "title": "Amos de títeres", "author": "Robert A. Heinlein", "year": 1986, "status": "llegit"}, {"id": 109, "title": "Puerta al verano", "author": "Robert A. Heinlein", "year": 2005, "status": "llegit"}, {"id": 110, "title": "Resistencia", "author": "Scott  Kelly", "year": 2017, "status": "llegit"}, {"id": 111, "title": "La profecia Romanov", "author": "Steve Berry", "year": 2005, "status": "llegit"}, {"id": 112, "title": "La reina en el palacio de las corrientes de aire (Millennium, #3)", "author": "Stieg Larsson", "year": 2009, "status": "llegit"}, {"id": 113, "title": "La noia que somiava un llumí i un bidó de gasolina (Millenium, #2)", "author": "Stieg Larsson", "year": 2008, "status": "llegit"}, {"id": 114, "title": "Los hombres que no amaban a las mujeres (Millennium, #1)", "author": "Stieg Larsson", "year": 2008, "status": "llegit"}, {"id": 115, "title": "Voces de Chernóbil", "author": "Svetlana Alexievich", "year": 2006, "status": "llegit"}, {"id": 116, "title": "Deuda de Honor (Jack Ryan, #7)", "author": "Tom Clancy", "year": 1998, "status": "llegit"}, {"id": 117, "title": "Conejo rojo", "author": "Tom Clancy", "year": 2003, "status": "llegit"}, {"id": 118, "title": "El niño 44", "author": "Tom Rob Smith", "year": 1900, "status": "llegit"}, {"id": 119, "title": "El discurso secreto", "author": "Tom Rob Smith", "year": 2012, "status": "llegit"}, {"id": 120, "title": "La gran persecución", "author": "Tom Sharpe", "year": 1999, "status": "llegit"}, {"id": 121, "title": "Blott on the Landscape (sin traducción oficial)", "author": "Tom Sharpe", "year": 1999, "status": "llegit"}, {"id": 122, "title": "Zafarrancho en Cambridge", "author": "Tom Sharpe", "year": 1999, "status": "llegit"}, {"id": 123, "title": "El retorno de Wilt", "author": "Tom Sharpe", "year": 1984, "status": "llegit"}, {"id": 124, "title": "Wilt en lo más alto", "author": "Tom Sharpe", "year": 2004, "status": "llegit"}, {"id": 125, "title": "Planetary, Vol. 1: Por todo el mundo y otras historias", "author": "Warren Ellis", "year": 2001, "status": "llegit"}, {"id": 126, "title": "Conjura contra América", "author": "Philip Roth", "year": null, "status": "llegit"}, {"id": 127, "title": "El hombre en el castillo", "author": "Philip K. Dirk", "year": null, "status": "llegit"}, {"id": 128, "title": "El dia de los trífidos", "author": "John Wyndham", "year": null, "status": "llegit"}, {"id": 129, "title": "El juego de Ender", "author": "Orson Scott Card", "year": null, "status": "llegit"}, {"id": 130, "title": "Eifelheim", "author": "Flynn", "year": null, "status": "llegit"}, {"id": 131, "title": "Cantico por Leibowitz", "author": "Millers", "year": null, "status": "llegit"}, {"id": 132, "title": "La carretera", "author": "Cormac McCarthy", "year": null, "status": "llegit"}];
+
+/* ============ STORAGE ============ */
+const STORE_KEY_MEDIA = 'arxiu_v1_media';
+const STORE_KEY_BOOKS = 'arxiu_v1_books';
+const STORE_KEY_OMDB = 'arxiu_v1_omdb_key';
+const STORE_KEY_SEEDED = 'arxiu_v1_seeded';
+
+function loadMedia(){
+  const raw = localStorage.getItem(STORE_KEY_MEDIA);
+  return raw ? JSON.parse(raw) : [];
+}
+function saveMedia(arr){ localStorage.setItem(STORE_KEY_MEDIA, JSON.stringify(arr)); }
+function loadBooks(){
+  const raw = localStorage.getItem(STORE_KEY_BOOKS);
+  return raw ? JSON.parse(raw) : [];
+}
+function saveBooks(arr){ localStorage.setItem(STORE_KEY_BOOKS, JSON.stringify(arr)); }
+
+if(!localStorage.getItem(STORE_KEY_SEEDED)){
+  saveMedia(SEED_MEDIA);
+  saveBooks(SEED_BOOKS);
+  localStorage.setItem(STORE_KEY_SEEDED, '1');
+}
+
+let media = loadMedia();
+let books = loadBooks();
+
+function nextId(arr){
+  return arr.reduce((m,x)=>Math.max(m,x.id||0), 0) + 1;
+}
+
+/* ============ TOAST ============ */
+let toastTimer;
+function toast(msg){
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>el.classList.remove('show'), 2400);
+}
+
+/* ============ TABS ============ */
+document.querySelectorAll('.tab').forEach(tab=>{
+  tab.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    const which = tab.dataset.tab;
+    document.getElementById('view-media').style.display = which==='media' ? '' : 'none';
+    document.getElementById('view-books').style.display = which==='books' ? '' : 'none';
+    renderStats();
+  });
+});
+
+const CHECK_SVG = '<svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const LINK_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><path d="M15 3h6v6"/><path d="M10 14L21 3"/></svg>';
+const IMDB_SVG = '<svg viewBox="0 0 64 32" xmlns="http://www.w3.org/2000/svg"><rect x="0.5" y="0.5" width="63" height="31" rx="4" fill="#F5C518" stroke="#00000022"/><text x="32" y="22.5" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="800" letter-spacing="-0.5" fill="#000000">IMDb</text></svg>';
+
+/* ============ RENDER MEDIA ============ */
+const mediaState = { search:'', type:'all', status:'all', sort:'title' };
+
+function filteredMedia(){
+  let list = media.filter(m=>{
+    if(mediaState.type!=='all' && m.type!==mediaState.type) return false;
+    if(mediaState.status!=='all' && m.status!==mediaState.status) return false;
+    if(mediaState.search && !m.title.toLowerCase().includes(mediaState.search.toLowerCase())) return false;
+    return true;
+  });
+  list.sort((a,b)=>{
+    if(mediaState.sort==='title') return a.title.localeCompare(b.title,'ca');
+    if(mediaState.sort==='year-desc') return (b.year||0)-(a.year||0);
+    if(mediaState.sort==='year-asc') return (a.year||9999)-(b.year||9999);
+    return 0;
+  });
+  return list;
+}
+
+function renderMedia(){
+  const grid = document.getElementById('mediaGrid');
+  const list = filteredMedia();
+  if(list.length===0){
+    grid.innerHTML = `<div class="empty-state"><span class="big">Cap fitxa trobada</span>Prova de canviar els filtres o afegeix-ne una de nova.</div>`;
+    renderStats();
+    return;
+  }
+  grid.innerHTML = list.map(m=>{
+    const rating = m.omdb && m.omdb.rating ? `<div class="row-rating">★ ${esc(m.omdb.rating)}</div>` : '<div class="row-rating"></div>';
+    const isVist = m.status==='vist';
+    const checkClass = isVist ? 'done' : 'inprogress';
+    const imdbUrl = m.omdb && m.omdb.imdbId
+      ? `https://www.imdb.com/title/${encodeURIComponent(m.omdb.imdbId)}/`
+      : `https://www.imdb.com/find/?q=${encodeURIComponent(m.title)}`;
+    return `
+    <div class="row" data-id="${m.id}">
+      <div class="check ${checkClass}" data-toggle="${m.id}" title="${isVist?'Vist — clica per marcar com a veient':'Veient ara — clica per marcar com a vist'}">${isVist?CHECK_SVG:''}</div>
+      <div class="row-title">${esc(m.title)}</div>
+      <div class="row-tag ${m.type}">${m.type==='serie'?'Sèrie':'Pel·li'}</div>
+      ${rating}
+      <div class="row-year">${m.year||'—'}</div>
+      <a class="row-link row-link-imdb" href="${imdbUrl}" target="_blank" rel="noopener" title="Obre a IMDb" onclick="event.stopPropagation()">${IMDB_SVG}</a>
+      <div class="row-chevron">›</div>
+    </div>`;
+  }).join('');
+  grid.querySelectorAll('.check').forEach(c=>{
+    c.addEventListener('click', e=>{
+      e.stopPropagation();
+      const id = parseInt(c.dataset.toggle);
+      const m = media.find(x=>x.id===id);
+      m.status = m.status==='vist' ? 'veient' : 'vist';
+      saveMedia(media);
+      renderMedia();
+    });
+  });
+  grid.querySelectorAll('.row').forEach(c=>{
+    c.addEventListener('click', ()=>openMediaModal(parseInt(c.dataset.id)));
+  });
+  renderStats();
+}
+
+/* ============ RENDER BOOKS ============ */
+const bookState = { search:'', status:'all', sort:'title' };
+
+function filteredBooks(){
+  let list = books.filter(b=>{
+    if(bookState.status!=='all' && (b.status||'llegit')!==bookState.status) return false;
+    if(bookState.search){
+      const s = bookState.search.toLowerCase();
+      const inTitle = b.title.toLowerCase().includes(s);
+      const inAuthor = (b.author||'').toLowerCase().includes(s);
+      if(!inTitle && !inAuthor) return false;
+    }
+    return true;
+  });
+  list.sort((a,b)=>{
+    if(bookState.sort==='title') return a.title.localeCompare(b.title,'ca');
+    if(bookState.sort==='author') return (a.author||'').localeCompare(b.author||'','ca');
+    if(bookState.sort==='year-desc') return (b.year||0)-(a.year||0);
+    if(bookState.sort==='year-asc') return (a.year||9999)-(b.year||9999);
+    return 0;
+  });
+  return list;
+}
+
+function renderBooks(){
+  const grid = document.getElementById('booksGrid');
+  const list = filteredBooks();
+  if(list.length===0){
+    grid.innerHTML = `<div class="empty-state"><span class="big">Cap llibre trobat</span>Prova de canviar la cerca o afegeix-ne un de nou.</div>`;
+    renderStats();
+    return;
+  }
+  grid.innerHTML = list.map(b=>{
+    const goodreadsUrl = `https://www.goodreads.com/search?q=${encodeURIComponent(b.title + (b.author ? ' ' + b.author : ''))}`;
+    const isLlegit = (b.status||'llegit')==='llegit';
+    const checkClass = isLlegit ? 'done' : 'inprogress';
+    return `
+    <div class="row" data-id="${b.id}">
+      <div class="check ${checkClass}" data-toggle="${b.id}" title="${isLlegit?'Llegit — clica per marcar com a pendent':'Pendent — clica per marcar com a llegit'}">${isLlegit?CHECK_SVG:''}</div>
+      <div class="row-title">${esc(b.title)} ${b.author?`<span class="row-author">— ${esc(b.author)}</span>`:''}</div>
+      <div class="row-year">${b.year||'—'}</div>
+      <a class="row-link" href="${goodreadsUrl}" target="_blank" rel="noopener" title="Obre a Goodreads" onclick="event.stopPropagation()">${LINK_SVG}</a>
+      <div class="row-chevron">›</div>
+    </div>`;
+  }).join('');
+  grid.querySelectorAll('.check').forEach(c=>{
+    c.addEventListener('click', e=>{
+      e.stopPropagation();
+      const id = parseInt(c.dataset.toggle);
+      const b = books.find(x=>x.id===id);
+      b.status = (b.status||'llegit')==='llegit' ? 'pendent' : 'llegit';
+      saveBooks(books);
+      renderBooks();
+    });
+  });
+  grid.querySelectorAll('.row').forEach(c=>{
+    c.addEventListener('click', ()=>openBookModal(parseInt(c.dataset.id)));
+  });
+  renderStats();
+}
+
+function renderStats(){
+  document.getElementById('countMedia').textContent = `(${media.length})`;
+  document.getElementById('countBooks').textContent = `(${books.length})`;
+  const activeTab = document.querySelector('.tab.active').dataset.tab;
+  if(activeTab==='media'){
+    const s = media.filter(m=>m.type==='serie').length;
+    const p = media.filter(m=>m.type==='peli').length;
+    const v = media.filter(m=>m.status==='veient').length;
+    document.getElementById('statsLine').textContent = `${media.length} fitxes — ${s} sèries · ${p} pel·lícules · ${v} en curs`;
+  } else {
+    const l = books.filter(b=>(b.status||'llegit')==='llegit').length;
+    const p = books.filter(b=>(b.status||'llegit')==='pendent').length;
+    document.getElementById('statsLine').textContent = `${books.length} llibres — ${l} llegits · ${p} pendents`;
+  }
+}
+
+function esc(s){
+  return (s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+/* ============ TOOLBAR WIRING ============ */
+document.getElementById('mediaSearch').addEventListener('input', e=>{ mediaState.search=e.target.value; renderMedia(); });
+document.getElementById('mediaSort').addEventListener('change', e=>{ mediaState.sort=e.target.value; renderMedia(); });
+document.getElementById('mediaTypeFilter').addEventListener('click', e=>{
+  const chip = e.target.closest('.chip'); if(!chip) return;
+  [...chip.parentElement.children].forEach(c=>c.classList.remove('active'));
+  chip.classList.add('active');
+  mediaState.type = chip.dataset.val;
+  renderMedia();
+});
+document.getElementById('mediaStatusFilter').addEventListener('click', e=>{
+  const chip = e.target.closest('.chip'); if(!chip) return;
+  [...chip.parentElement.children].forEach(c=>c.classList.remove('active'));
+  chip.classList.add('active');
+  mediaState.status = chip.dataset.val;
+  renderMedia();
+});
+document.getElementById('bookSearch').addEventListener('input', e=>{ bookState.search=e.target.value; renderBooks(); });
+document.getElementById('bookSort').addEventListener('change', e=>{ bookState.sort=e.target.value; renderBooks(); });
+document.getElementById('bookStatusFilter').addEventListener('click', e=>{
+  const chip = e.target.closest('.chip'); if(!chip) return;
+  [...chip.parentElement.children].forEach(c=>c.classList.remove('active'));
+  chip.classList.add('active');
+  bookState.status = chip.dataset.val;
+  renderBooks();
+});
+
+/* ============ MEDIA MODAL ============ */
+const mediaModal = document.getElementById('mediaModal');
+let currentMediaStatus = 'vist';
+
+function openMediaModal(id){
+  const m = id ? media.find(x=>x.id===id) : null;
+  document.getElementById('mediaId').value = m ? m.id : '';
+  document.getElementById('mediaModalTitle').textContent = m ? 'Edita fitxa' : 'Nova fitxa';
+  document.getElementById('mediaModalSub').textContent = m ? (m.type==='serie'?'Sèrie':'Pel·lícula') : 'Sèrie o pel·lícula';
+  document.getElementById('mediaTitle').value = m ? m.title : '';
+  document.getElementById('mediaYear').value = m ? (m.year||'') : '';
+  document.getElementById('mediaType').value = m ? m.type : 'serie';
+  currentMediaStatus = m ? m.status : 'vist';
+  document.querySelectorAll('#mediaModal .status-toggle .chip').forEach(c=>{
+    c.classList.toggle('active', c.dataset.status===currentMediaStatus);
+  });
+  document.getElementById('mediaDeleteBtn').style.display = m ? '' : 'none';
+  document.getElementById('mediaFetchStatus').textContent = '';
+  document.getElementById('mediaFetchStatus').className = 'fetch-status';
+
+  const infoBox = document.getElementById('mediaFetchInfo');
+  if(m && m.omdb && (m.omdb.rating || m.omdb.plot)){
+    infoBox.style.display = 'block';
+    infoBox.innerHTML = mediaInfoHtml(m.omdb);
+  } else {
+    infoBox.style.display = 'none';
+    infoBox.innerHTML = '';
+  }
+
+  mediaModal.classList.add('show');
+}
+
+function mediaInfoHtml(o){
+  let html = '';
+  if(o.rating) html += `<span class="badge">★ ${esc(o.rating)}</span> IMDb<br>`;
+  if(o.genre) html += `<div style="margin-top:6px;">${esc(o.genre)}</div>`;
+  if(o.plot) html += `<div style="margin-top:6px;">${esc(o.plot)}</div>`;
+  if(o.imdbId) html += `<div style="margin-top:8px;"><a href="https://www.imdb.com/title/${esc(o.imdbId)}/" target="_blank" rel="noopener">Veure a IMDb →</a></div>`;
+  return html;
+}
+
+document.getElementById('addMediaBtn').addEventListener('click', ()=>openMediaModal(null));
+document.querySelectorAll('#mediaModal .status-toggle .chip').forEach(c=>{
+  c.addEventListener('click', ()=>{
+    document.querySelectorAll('#mediaModal .status-toggle .chip').forEach(x=>x.classList.remove('active'));
+    c.classList.add('active');
+    currentMediaStatus = c.dataset.status;
+  });
+});
+
+document.getElementById('mediaSaveBtn').addEventListener('click', ()=>{
+  const title = document.getElementById('mediaTitle').value.trim();
+  if(!title){ toast('Cal un títol'); return; }
+  const idVal = document.getElementById('mediaId').value;
+  const year = document.getElementById('mediaYear').value ? parseInt(document.getElementById('mediaYear').value) : null;
+  const type = document.getElementById('mediaType').value;
+
+  if(idVal){
+    const id = parseInt(idVal);
+    const m = media.find(x=>x.id===id);
+    m.title = title; m.year = year; m.type = type; m.status = currentMediaStatus;
+  } else {
+    const rec = { id: nextId(media), title, year, type, status: currentMediaStatus };
+    if(mediaModal._pendingOmdb){ rec.omdb = mediaModal._pendingOmdb; mediaModal._pendingOmdb = null; }
+    media.push(rec);
+  }
+  saveMedia(media);
+  renderMedia();
+  mediaModal.classList.remove('show');
+  toast('Fitxa desada');
+});
+
+document.getElementById('mediaDeleteBtn').addEventListener('click', ()=>{
+  const id = parseInt(document.getElementById('mediaId').value);
+  if(!confirm('Segur que vols eliminar aquesta fitxa?')) return;
+  media = media.filter(x=>x.id!==id);
+  saveMedia(media);
+  renderMedia();
+  mediaModal.classList.remove('show');
+  toast('Fitxa eliminada');
+});
+
+document.getElementById('mediaFetchBtn').addEventListener('click', async ()=>{
+  const title = document.getElementById('mediaTitle').value.trim();
+  if(!title){ toast('Escriu primer un títol'); return; }
+  const year = document.getElementById('mediaYear').value;
+  const statusEl = document.getElementById('mediaFetchStatus');
+  const key = localStorage.getItem(STORE_KEY_OMDB);
+  if(!key){
+    statusEl.textContent = "Cal configurar una clau OMDb API als Ajustos (icona d’engranatge).";
+    statusEl.className = 'fetch-status error';
+    return;
+  }
+  statusEl.textContent = 'Cercant…';
+  statusEl.className = 'fetch-status';
+  try{
+    let url = `https://www.omdbapi.com/?apikey=${encodeURIComponent(key)}&t=${encodeURIComponent(title)}`;
+    if(year) url += `&y=${encodeURIComponent(year)}`;
+    let res = await fetch(url);
+    let data = await res.json();
+    if(data.Response==='False' && year){
+      res = await fetch(`https://www.omdbapi.com/?apikey=${encodeURIComponent(key)}&t=${encodeURIComponent(title)}`);
+      data = await res.json();
+    }
+    if(data.Response==='False'){
+      statusEl.textContent = "No s’ha trobat: " + (data.Error||'');
+      statusEl.className = 'fetch-status error';
+      return;
+    }
+    const omdb = {
+      rating: data.imdbRating && data.imdbRating!=='N/A' ? data.imdbRating : null,
+      genre: data.Genre && data.Genre!=='N/A' ? data.Genre : null,
+      plot: data.Plot && data.Plot!=='N/A' ? data.Plot : null,
+      imdbId: data.imdbID || null
+    };
+    if(data.Year){
+      const yNum = parseInt((data.Year+'').slice(0,4));
+      if(!isNaN(yNum)) document.getElementById('mediaYear').value = yNum;
+    }
+    if(data.Type==='series') document.getElementById('mediaType').value = 'serie';
+    else if(data.Type==='movie') document.getElementById('mediaType').value = 'peli';
+
+    const infoBox = document.getElementById('mediaFetchInfo');
+    infoBox.style.display = 'block';
+    infoBox.innerHTML = mediaInfoHtml(omdb);
+
+    statusEl.textContent = 'Trobat ✓ — recorda prémer "Desa" per guardar-ho.';
+    statusEl.className = 'fetch-status ok';
+
+    const idVal = document.getElementById('mediaId').value;
+    if(idVal){
+      const m = media.find(x=>x.id===parseInt(idVal));
+      if(m){ m.omdb = omdb; saveMedia(media); renderMedia(); }
+    } else {
+      mediaModal._pendingOmdb = omdb;
+    }
+  } catch(err){
+    statusEl.textContent = 'Error de connexió: ' + err.message;
+    statusEl.className = 'fetch-status error';
+  }
+});
+
+/* ============ BOOK MODAL ============ */
+const bookModal = document.getElementById('bookModal');
+let currentBookStatus = 'llegit';
+
+function openBookModal(id){
+  const b = id ? books.find(x=>x.id===id) : null;
+  document.getElementById('bookId').value = b ? b.id : '';
+  document.getElementById('bookModalTitle').textContent = b ? 'Edita fitxa' : 'Nova fitxa';
+  document.getElementById('bookTitle').value = b ? b.title : '';
+  document.getElementById('bookAuthor').value = b ? (b.author||'') : '';
+  document.getElementById('bookYear').value = b ? (b.year||'') : '';
+  currentBookStatus = b ? (b.status||'llegit') : 'llegit';
+  document.querySelectorAll('#bookStatusToggle .chip').forEach(c=>{
+    c.classList.toggle('active', c.dataset.status===currentBookStatus);
+  });
+  document.getElementById('bookDeleteBtn').style.display = b ? '' : 'none';
+  document.getElementById('bookFetchStatus').textContent = '';
+  document.getElementById('bookFetchStatus').className = 'fetch-status';
+
+  const infoBox = document.getElementById('bookFetchInfo');
+  if(b && b.gbooks && (b.gbooks.description || b.gbooks.publisher)){
+    infoBox.style.display = 'block';
+    infoBox.innerHTML = bookInfoHtml(b.gbooks);
+  } else {
+    infoBox.style.display = 'none';
+    infoBox.innerHTML = '';
+  }
+  bookModal.classList.add('show');
+}
+
+document.querySelectorAll('#bookStatusToggle .chip').forEach(c=>{
+  c.addEventListener('click', ()=>{
+    document.querySelectorAll('#bookStatusToggle .chip').forEach(x=>x.classList.remove('active'));
+    c.classList.add('active');
+    currentBookStatus = c.dataset.status;
+  });
+});
+
+function bookInfoHtml(g){
+  let html = '';
+  if(g.publisher) html += `<div>${esc(g.publisher)}${g.publishedDate ? ' · '+esc(g.publishedDate) : ''}</div>`;
+  if(g.description) html += `<div style="margin-top:6px;">${esc(g.description).slice(0,220)}${g.description.length>220?'…':''}</div>`;
+  if(g.infoLink) html += `<div style="margin-top:8px;"><a href="${esc(g.infoLink)}" target="_blank" rel="noopener">Veure a Google Books →</a></div>`;
+  return html;
+}
+
+document.getElementById('addBookBtn').addEventListener('click', ()=>openBookModal(null));
+
+document.getElementById('bookSaveBtn').addEventListener('click', ()=>{
+  const title = document.getElementById('bookTitle').value.trim();
+  if(!title){ toast('Cal un títol'); return; }
+  const idVal = document.getElementById('bookId').value;
+  const author = document.getElementById('bookAuthor').value.trim() || null;
+  const year = document.getElementById('bookYear').value ? parseInt(document.getElementById('bookYear').value) : null;
+
+  if(idVal){
+    const id = parseInt(idVal);
+    const b = books.find(x=>x.id===id);
+    b.title = title; b.author = author; b.year = year; b.status = currentBookStatus;
+    if(bookModal._pendingGbooks){ b.gbooks = bookModal._pendingGbooks; bookModal._pendingGbooks = null; }
+  } else {
+    const rec = { id: nextId(books), title, author, year, status: currentBookStatus };
+    if(bookModal._pendingGbooks){ rec.gbooks = bookModal._pendingGbooks; bookModal._pendingGbooks = null; }
+    books.push(rec);
+  }
+  saveBooks(books);
+  renderBooks();
+  bookModal.classList.remove('show');
+  toast('Fitxa desada');
+});
+
+document.getElementById('bookDeleteBtn').addEventListener('click', ()=>{
+  const id = parseInt(document.getElementById('bookId').value);
+  if(!confirm('Segur que vols eliminar aquest llibre?')) return;
+  books = books.filter(x=>x.id!==id);
+  saveBooks(books);
+  renderBooks();
+  bookModal.classList.remove('show');
+  toast('Llibre eliminat');
+});
+
+document.getElementById('bookFetchBtn').addEventListener('click', async ()=>{
+  const title = document.getElementById('bookTitle').value.trim();
+  if(!title){ toast('Escriu primer un títol'); return; }
+  const author = document.getElementById('bookAuthor').value.trim();
+  const statusEl = document.getElementById('bookFetchStatus');
+  statusEl.textContent = 'Cercant…';
+  statusEl.className = 'fetch-status';
+  try{
+    let q = `intitle:${title}`;
+    if(author) q += `+inauthor:${author}`;
+    const res = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&maxResults=1`);
+    const data = await res.json();
+    if(!data.items || data.items.length===0){
+      statusEl.textContent = "No s’ha trobat cap resultat.";
+      statusEl.className = 'fetch-status error';
+      return;
+    }
+    const info = data.items[0].volumeInfo;
+    const gbooks = {
+      publisher: info.publisher || null,
+      publishedDate: info.publishedDate || null,
+      description: info.description || null,
+      infoLink: info.infoLink || null
+    };
+    if(info.authors && info.authors.length && !author){
+      document.getElementById('bookAuthor').value = info.authors.join(', ');
+    }
+    if(info.publishedDate){
+      const yNum = parseInt((info.publishedDate+'').slice(0,4));
+      if(!isNaN(yNum)) document.getElementById('bookYear').value = yNum;
+    }
+    const infoBox = document.getElementById('bookFetchInfo');
+    infoBox.style.display = 'block';
+    infoBox.innerHTML = bookInfoHtml(gbooks);
+
+    statusEl.textContent = 'Trobat ✓ — recorda prémer "Desa" per guardar-ho.';
+    statusEl.className = 'fetch-status ok';
+
+    const idVal = document.getElementById('bookId').value;
+    if(idVal){
+      const b = books.find(x=>x.id===parseInt(idVal));
+      if(b){ b.gbooks = gbooks; saveBooks(books); renderBooks(); }
+    } else {
+      bookModal._pendingGbooks = gbooks;
+    }
+  } catch(err){
+    statusEl.textContent = 'Error de connexió: ' + err.message;
+    statusEl.className = 'fetch-status error';
+  }
+});
+
+/* ============ SETTINGS MODAL ============ */
+const settingsModal = document.getElementById('settingsModal');
+document.getElementById('settingsBtn').addEventListener('click', ()=>{
+  document.getElementById('omdbKeyInput').value = localStorage.getItem(STORE_KEY_OMDB) || '';
+  settingsModal.classList.add('show');
+});
+document.getElementById('saveSettingsBtn').addEventListener('click', ()=>{
+  const key = document.getElementById('omdbKeyInput').value.trim();
+  if(key) localStorage.setItem(STORE_KEY_OMDB, key);
+  else localStorage.removeItem(STORE_KEY_OMDB);
+  settingsModal.classList.remove('show');
+  toast('Ajustos desats');
+});
+
+/* ============ CLOSE MODALS ============ */
+document.querySelectorAll('.overlay').forEach(ov=>{
+  ov.addEventListener('click', e=>{ if(e.target===ov) ov.classList.remove('show'); });
+  ov.querySelectorAll('[data-close]').forEach(btn=>btn.addEventListener('click', ()=>ov.classList.remove('show')));
+});
+document.addEventListener('keydown', e=>{
+  if(e.key==='Escape') document.querySelectorAll('.overlay.show').forEach(ov=>ov.classList.remove('show'));
+});
+
+/* ============ EXPORT / IMPORT ============ */
+document.getElementById('exportBtn').addEventListener('click', async ()=>{
+  const payload = { media, books, exportedAt: new Date().toISOString() };
+  const jsonStr = JSON.stringify(payload, null, 2);
+  const filename = `arxiu-backup-${new Date().toISOString().slice(0,10)}.json`;
+
+  if(canUseFileSystemAccess && 'showSaveFilePicker' in window){
+    try{
+      const handle = await window.showSaveFilePicker({
+        suggestedName: filename,
+        types: [{ description: 'Backup JSON', accept: {'application/json': ['.json']} }]
+      });
+      const writable = await handle.createWritable();
+      await writable.write(jsonStr);
+      await writable.close();
+      toast('Backup exportat');
+      return;
+    } catch(err){
+      if(err && err.name === 'AbortError') return; // user cancelled the picker
+      // if it fails for another reason, fall through to the download fallback below
+    }
+  }
+
+  // Fallback (Safari, Firefox, mobile…): normal browser download.
+  const blob = new Blob([jsonStr], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('Backup exportat');
+});
+
+document.getElementById('importBtn').addEventListener('click', ()=>{
+  document.getElementById('importFile').click();
+});
+document.getElementById('importFile').addEventListener('change', e=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = evt=>{
+    try{
+      const data = JSON.parse(evt.target.result);
+      if(!data.media || !data.books) throw new Error('Format no vàlid');
+      if(!confirm(`Això substituirà les ${media.length} fitxes i ${books.length} llibres actuals per ${data.media.length} fitxes i ${data.books.length} llibres del backup. Continuar?`)) return;
+      media = data.media;
+      books = data.books;
+      saveMedia(media);
+      saveBooks(books);
+      renderMedia();
+      renderBooks();
+      toast('Backup importat correctament');
+    } catch(err){
+      alert('No s’ha pogut llegir el fitxer: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+});
+
+/* ============ INIT ============ */
+renderMedia();
+renderBooks();
+
+/* ============ DESA SOBRE EL FITXER HTML OBERT (Chrome/Edge) ============ */
+let linkedFileHandle = null;
+const canUseFileSystemAccess = 'showOpenFilePicker' in window && (()=>{ try{ return window.self===window.top; }catch{ return false; } })();
+
+document.getElementById('saveToFileBtn').addEventListener('click', async ()=>{
+  if(!canUseFileSystemAccess){
+    alert('Aquest navegador no permet desar directament sobre el fitxer (funció disponible només a Chrome o Edge d\'escriptori). Fes servir els botons d\'exportar/importar en el seu lloc.');
+    return;
+  }
+  const btn = document.getElementById('saveToFileBtn');
+  try{
+    if(!linkedFileHandle){
+      const [handle] = await window.showOpenFilePicker({
+        types: [{ description: 'Fitxer HTML de l\'arxiu', accept: {'text/html': ['.html','.htm']} }],
+        excludeAcceptAllOption: false,
+        multiple: false
+      });
+      linkedFileHandle = handle;
+    }
+    const perm = await linkedFileHandle.queryPermission({ mode: 'readwrite' });
+    if(perm !== 'granted'){
+      const req = await linkedFileHandle.requestPermission({ mode: 'readwrite' });
+      if(req !== 'granted'){ toast('Permís denegat'); return; }
+    }
+
+    let htmlText = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+    htmlText = htmlText.replace(/const SEED_MEDIA = .*?;\n/s, `const SEED_MEDIA = ${JSON.stringify(media)};\n`);
+    htmlText = htmlText.replace(/const SEED_BOOKS = .*?;\n/s, `const SEED_BOOKS = ${JSON.stringify(books)};\n`);
+
+    const writable = await linkedFileHandle.createWritable();
+    await writable.write(htmlText);
+    await writable.close();
+
+    btn.classList.add('linked');
+    toast('Desat sobre el fitxer HTML ✓');
+  } catch(err){
+    if(err && err.name === 'AbortError') return; // user cancelled picker
+    alert('No s\'ha pogut desar: ' + err.message);
+  }
+});
+</script>
+</body>
+</html>
